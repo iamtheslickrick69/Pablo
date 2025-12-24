@@ -44,30 +44,20 @@ export const Header = () => {
               : "bg-black/40 backdrop-blur-md py-3 border border-white/10",
           )}
         >
-          {/* Logo Badge */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div
+          {/* Logo - Full Size */}
+          <Link href="/" className="flex items-center group">
+            <Image
+              src="/whitelogo.png"
+              alt="Bunker Excavation"
+              width={280}
+              height={105}
               className={cn(
-                "relative transition-all duration-400 rounded-lg border border-white/20 bg-black overflow-hidden group-hover:border-white/30",
-                scrolled ? "w-10 h-10" : "w-12 h-12",
+                "transition-all duration-400 group-hover:scale-105",
+                scrolled ? "h-12" : "h-16",
               )}
-            >
-              <Image
-                src="/whitelogo.png"
-                alt="Bunker Excavation"
-                width={48}
-                height={48}
-                className="w-full h-full object-contain p-1.5 transition-transform duration-400 group-hover:scale-110"
-              />
-            </div>
-            <span
-              className={cn(
-                "font-mono font-bold uppercase tracking-wider transition-all duration-400 max-md:hidden",
-                scrolled ? "text-xs" : "text-sm",
-              )}
-            >
-              BUNKER
-            </span>
+              style={{ width: "auto", height: scrolled ? "48px" : "64px" }}
+              priority
+            />
           </Link>
 
           {/* Center Navigation */}
