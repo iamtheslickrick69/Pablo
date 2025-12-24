@@ -8,9 +8,10 @@ import { useState } from "react"
 
 interface MobileMenuProps {
   className?: string
+  isLight?: boolean
 }
 
-export const MobileMenu = ({ className }: MobileMenuProps) => {
+export const MobileMenu = ({ className, isLight = false }: MobileMenuProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const menuItems = [
@@ -28,7 +29,11 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
     <Dialog.Root modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <Dialog.Trigger asChild>
         <button
-          className={cn("group lg:hidden p-2 transition-colors text-foreground", className)}
+          className={cn(
+            "group lg:hidden p-2 transition-colors",
+            isLight ? "text-slate-700 hover:text-slate-900" : "text-foreground",
+            className
+          )}
           aria-label="Open menu"
         >
           <Menu className="group-[[data-state=open]]:hidden" size={24} />
