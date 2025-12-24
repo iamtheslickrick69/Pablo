@@ -47,7 +47,7 @@ export function Contact() {
             <div className="flex flex-col items-center p-6 border border-white/10 bg-white/5 rounded-sm">
               <MapPin className="size-8 text-white mb-3" />
               <span className="font-mono text-sm text-foreground/50 uppercase mb-1">Service Area</span>
-              <span className="font-sentient text-foreground">Utah Region</span>
+              <span className="font-sentient text-foreground text-center">St. George & Washington County</span>
             </div>
           </div>
 

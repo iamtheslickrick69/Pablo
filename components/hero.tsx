@@ -24,7 +24,7 @@ export function Hero() {
             alt="Bunker Excavation"
             width={320}
             height={120}
-            className="w-[240px] md:w-[320px]"
+            className="w-[240px] md:w-[320px] rounded-xl"
             priority
           />
         </div>
