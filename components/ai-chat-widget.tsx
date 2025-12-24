@@ -4,6 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { X, Send } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface Message {
   role: "user" | "assistant"
@@ -123,26 +124,36 @@ export function AIChatWidget() {
   return (
     <>
       {/* Chat Button - Dark Frosted Glass */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className={cn(
-          "fixed bottom-6 right-6 z-50 size-16 rounded-full backdrop-blur-2xl bg-black/80 border-2 border-white/20 text-white shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_16px_rgba(255,255,255,0.1)] hover:bg-black/90 hover:border-white/30 hover:shadow-[0_12px_48px_rgba(0,0,0,0.5),0_0_24px_rgba(255,255,255,0.2)] transition-all duration-300 flex items-center justify-center hover:scale-110 group",
-          isOpen && "scale-0 opacity-0",
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.button
+            onClick={() => setIsOpen(true)}
+            className="fixed bottom-6 right-6 z-50 size-16 rounded-full backdrop-blur-2xl bg-black/80 border-2 border-white/20 text-white shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_16px_rgba(255,255,255,0.1)] hover:bg-black/90 hover:border-white/30 hover:shadow-[0_12px_48px_rgba(0,0,0,0.5),0_0_24px_rgba(255,255,255,0.2)] flex items-center justify-center group"
+            aria-label="Open chat"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ShovelIcon className="size-7 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.5)] transition-all" />
+            {/* Pulse ring */}
+            <span className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping" />
+          </motion.button>
         )}
-        aria-label="Open chat"
-      >
-        <ShovelIcon className="size-7 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.5)] transition-all" />
-        {/* Pulse ring */}
-        <span className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping" />
-      </button>
+      </AnimatePresence>
 
       {/* Chat Window - Dark Frosted Glass */}
-      <div
-        className={cn(
-          "fixed bottom-6 right-6 z-50 w-[420px] max-w-[calc(100vw-48px)] backdrop-blur-2xl bg-black/80 rounded-3xl shadow-[0_16px_64px_rgba(0,0,0,0.6),0_0_32px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)] border-2 border-white/20 overflow-hidden transition-all duration-300 origin-bottom-right",
-          isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none",
-        )}
-      >
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed bottom-6 right-6 z-50 w-[420px] max-w-[calc(100vw-48px)] backdrop-blur-2xl bg-black/80 rounded-3xl shadow-[0_16px_64px_rgba(0,0,0,0.6),0_0_32px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)] border-2 border-white/20 overflow-hidden"
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
+          >
         {/* Header - Frosted Glass */}
         <div className="relative px-5 py-5 flex items-center justify-between border-b border-white/10 bg-white/5 backdrop-blur-xl">
           <div className="flex items-center gap-3">
@@ -255,7 +266,9 @@ export function AIChatWidget() {
             AI-powered assistant. For detailed quotes, contact Paul directly.
           </p>
         </div>
-      </div>
+      </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

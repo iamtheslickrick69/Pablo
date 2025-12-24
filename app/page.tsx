@@ -8,18 +8,38 @@ import { Process } from "@/components/sections/process"
 import { AIFeature } from "@/components/sections/ai-feature"
 import { Contact } from "@/components/sections/contact"
 import { Footer } from "@/components/sections/footer"
+import { ScrollReveal } from "@/components/animations/scroll-reveal"
 import { Leva } from "leva"
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <About />
-      <ServicesShowcase />
-      <WhyUs />
-      <Process />
-      <AIFeature />
-      <Contact />
+
+      <ScrollReveal>
+        <About />
+      </ScrollReveal>
+
+      <ScrollReveal delay={0.2}>
+        <ServicesShowcase />
+      </ScrollReveal>
+
+      <ScrollReveal delay={0.2}>
+        <WhyUs />
+      </ScrollReveal>
+
+      <ScrollReveal delay={0.2}>
+        <Process />
+      </ScrollReveal>
+
+      <ScrollReveal delay={0.2}>
+        <AIFeature />
+      </ScrollReveal>
+
+      <ScrollReveal delay={0.2}>
+        <Contact />
+      </ScrollReveal>
+
       <Footer />
       <Leva hidden />
     </>
