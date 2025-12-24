@@ -1,91 +1,107 @@
 "use client"
 
-import { Pill } from "../pill"
-import Image from "next/image"
-
-const timeline = [
-  { year: "2009", event: "Founded Bunker Excavation with one excavator" },
-  { year: "2014", event: "Expanded fleet to 10+ pieces of equipment" },
-  { year: "2018", event: "Completed 500th residential project" },
-  { year: "2023", event: "Awarded Best Excavation Company in Washington County" },
-]
+import { MessageSquare, Mail, Calendar } from "lucide-react"
 
 export function About() {
   return (
-    <section id="about" className="relative py-24 md:py-32 bg-white">
-      <div className="container relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left: Founder Image & Quote */}
-          <div className="relative">
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
-              <Image
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop&crop=face"
-                alt="Paul Bunker - Founder"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <blockquote className="font-mono text-sm text-white/90 italic mb-2">
-                  &quot;Every dig tells a story. Whether it&apos;s a family&apos;s dream home foundation or a commercial
-                  development that will serve the community, we approach each job with the same level of care and
-                  precision.&quot;
-                </blockquote>
-                <p className="font-sentient text-white text-lg">— Paul Bunker, Founder</p>
-              </div>
-            </div>
+    <section id="about" className="relative">
+      {/* Sophisticated Black & White About Section */}
+      <div className="relative bg-black py-24 md:py-32">
+        {/* Top Border Accent */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-            {/* Decorative elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-amber-400/20 rounded-full blur-2xl" />
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-slate-900/10 rounded-full blur-2xl" />
-          </div>
+        <div className="container relative z-10">
+          <div className="max-w-6xl mx-auto">
+            {/* Two Column Layout */}
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+              {/* Left Column: Heading & Badge */}
+              <div className="relative">
+                {/* Vertical Accent Line */}
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-white/40 via-white/20 to-transparent hidden lg:block" />
 
-          {/* Right: Content */}
-          <div>
-            <Pill variant="light" className="mb-6">
-              ABOUT US
-            </Pill>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sentient mb-6 text-slate-900">
-              Meet <i className="font-light">Paul Bunker</i>
-            </h2>
-
-            <div className="space-y-4 font-mono text-slate-600 mb-10">
-              <p>
-                With over 15 years in the excavation industry, Paul Bunker founded Bunker Excavation with a simple
-                mission: deliver exceptional quality and honest service to every customer.
-              </p>
-              <p>
-                Starting with a single excavator and a dedication to hard work, Paul built the company from the ground
-                up—literally. Today, Bunker Excavation serves residential and commercial clients throughout
-                Washington County, maintaining the same commitment to craftsmanship that defined our first project.
-              </p>
-            </div>
-
-            {/* Timeline */}
-            <div className="relative">
-              <h3 className="font-sentient text-lg text-slate-900 mb-6">Our Journey</h3>
-              <div className="space-y-0">
-                {timeline.map((item, index) => (
-                  <div key={index} className="relative flex gap-4 pb-6 last:pb-0 group">
-                    {/* Line */}
-                    {index < timeline.length - 1 && (
-                      <div className="absolute left-[11px] top-6 w-0.5 h-full bg-slate-200 group-hover:bg-amber-400 transition-colors duration-300" />
-                    )}
-
-                    {/* Dot */}
-                    <div className="relative z-10 shrink-0 size-6 rounded-full bg-slate-200 group-hover:bg-amber-400 border-4 border-white shadow-sm transition-colors duration-300" />
-
-                    {/* Content */}
-                    <div className="pt-0.5">
-                      <span className="font-sentient text-amber-600 font-medium">{item.year}</span>
-                      <p className="font-mono text-sm text-slate-600">{item.event}</p>
-                    </div>
+                <div className="lg:pl-8">
+                  {/* Clean White Pill */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 bg-white/5 mb-8">
+                    <div className="w-2 h-2 rounded-full bg-white" />
+                    <span className="font-mono text-xs tracking-wider text-white/70 uppercase">About Us</span>
                   </div>
-                ))}
+
+                  <h2 className="text-4xl sm:text-5xl md:text-6xl font-sentient text-white leading-tight">
+                    Meet <i className="font-light">Paul Bunker</i>
+                  </h2>
+
+                  {/* Decorative Line */}
+                  <div className="mt-8 w-16 h-px bg-white/30" />
+                </div>
+              </div>
+
+              {/* Right Column: Content & CTA */}
+              <div className="flex flex-col justify-between">
+                <div className="space-y-6 font-mono text-white/70 leading-relaxed text-base">
+                  <p>
+                    St. George&apos;s desert terrain—caliche, volcanic rock, and extreme heat—demands specialized excavation expertise.
+                    Paul Bunker has spent years mastering these conditions, delivering precise work on time, every time.
+                  </p>
+                  <p>
+                    Serving residential and commercial clients throughout Washington County with honest service, expert execution,
+                    and a deep understanding of what it takes to excavate in the desert.
+                  </p>
+                </div>
+
+                {/* CTA Buttons */}
+                <div className="mt-10 flex flex-col gap-3 max-w-sm">
+                  <a
+                    href="sms:8017063783?body=Hey%20Paul%2C%20I%20would%20like%20some%20help%20with%20your%20excavation%20services."
+                    className="group relative overflow-hidden"
+                  >
+                    <div
+                      className="relative flex items-center gap-3 px-5 py-3 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                      style={{
+                        clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
+                      }}
+                    >
+                      <MessageSquare className="size-4 text-white shrink-0" strokeWidth={2} />
+                      <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">Text Us</span>
+                    </div>
+                  </a>
+
+                  <a
+                    href="mailto:paulbunker@gmail.com?subject=Excavation%20Services%20Inquiry&body=Hey%20Paul%2C%20I%20would%20like%20some%20help%20with%20your%20excavation%20services."
+                    className="group relative overflow-hidden"
+                  >
+                    <div
+                      className="relative flex items-center gap-3 px-5 py-3 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                      style={{
+                        clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
+                      }}
+                    >
+                      <Mail className="size-4 text-white shrink-0" strokeWidth={2} />
+                      <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">Email Us</span>
+                    </div>
+                  </a>
+
+                  <a
+                    href="#contact"
+                    className="group relative overflow-hidden"
+                  >
+                    <div
+                      className="relative flex items-center gap-3 px-5 py-3 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                      style={{
+                        clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
+                      }}
+                    >
+                      <Calendar className="size-4 text-white shrink-0" strokeWidth={2} />
+                      <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">Schedule</span>
+                    </div>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Bottom Border Accent */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       </div>
     </section>
   )

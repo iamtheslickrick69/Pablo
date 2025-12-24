@@ -1,8 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { Pill } from "../pill"
-import { Shovel, Home, Building2, Mountain, Droplets, TreePine, CheckCircle2 } from "lucide-react"
+import { Shovel, Home, Building2, Mountain, Droplets, TreePine, ChevronDown, ArrowLeft, ArrowRight, CheckCircle2, Ruler, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const services = [
@@ -11,15 +10,9 @@ const services = [
     icon: Shovel,
     title: "Foundation Excavation",
     shortTitle: "Foundation",
-    description:
-      "Precise foundation digging for residential and commercial structures with exact depth and grade specifications.",
-    features: [
-      "Exact depth measurements within 1/4 inch tolerance",
-      "GPS-guided excavation for perfect placement",
-      "Soil compaction testing and certification",
-      "Foundation pier and footer preparation",
-    ],
-    stats: { completed: "500+", avgDepth: "8-12ft" },
+    description: "Precise foundation digging with exact depth and grade specifications.",
+    stats: { completed: "500+", depth: "8-12ft" },
+    statIcons: { completed: CheckCircle2, depth: Ruler },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahvid.mp4",
   },
   {
@@ -27,15 +20,9 @@ const services = [
     icon: Home,
     title: "Basement Excavation",
     shortTitle: "Basement",
-    description:
-      "Expert basement and cellar excavation with proper drainage planning and structural support preparation.",
-    features: [
-      "Waterproofing and drainage system installation",
-      "Structural wall preparation and reinforcement",
-      "Access planning for equipment and materials",
-      "Walkout basement grading and finishing",
-    ],
-    stats: { completed: "300+", avgDepth: "10-14ft" },
+    description: "Expert basement excavation with drainage planning and structural support.",
+    stats: { completed: "300+", depth: "10-14ft" },
+    statIcons: { completed: CheckCircle2, depth: Ruler },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahwarner.mp4",
   },
   {
@@ -43,14 +30,9 @@ const services = [
     icon: Building2,
     title: "Commercial Site Work",
     shortTitle: "Commercial",
-    description: "Large-scale site preparation for commercial developments, parking lots, and industrial facilities.",
-    features: [
-      "Multi-phase project coordination",
-      "Parking lot subgrade preparation",
-      "Loading dock and ramp excavation",
-      "Underground utility corridor planning",
-    ],
-    stats: { completed: "150+", avgSize: "5-50 acres" },
+    description: "Large-scale site preparation for commercial developments and facilities.",
+    stats: { completed: "150+", scale: "5-50 acres" },
+    statIcons: { completed: CheckCircle2, scale: MapPin },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahvidmoody.mp4",
   },
   {
@@ -58,15 +40,9 @@ const services = [
     icon: Mountain,
     title: "Land Grading",
     shortTitle: "Grading",
-    description:
-      "Professional land leveling and grading services to ensure proper drainage and stable building surfaces.",
-    features: [
-      "Laser-guided precision grading",
-      "Erosion control and slope stabilization",
-      "Drainage swale and retention pond creation",
-      "Building pad preparation and compaction",
-    ],
-    stats: { completed: "600+", accuracy: "±0.5 inch" },
+    description: "Professional land leveling for proper drainage and stable surfaces.",
+    stats: { completed: "600+", accuracy: "±0.5in" },
+    statIcons: { completed: CheckCircle2, accuracy: Ruler },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahvid.mp4",
   },
   {
@@ -74,14 +50,9 @@ const services = [
     icon: Droplets,
     title: "Utility Trenching",
     shortTitle: "Utility",
-    description: "Accurate trenching for water lines, sewer connections, electrical conduits, and drainage systems.",
-    features: [
-      "Underground utility locating and marking",
-      "Trench shoring and safety systems",
-      "Bedding and backfill to specifications",
-      "Fiber optic and cable conduit installation",
-    ],
-    stats: { completed: "800+", avgDepth: "3-8ft" },
+    description: "Accurate trenching for water, sewer, electrical, and drainage systems.",
+    stats: { completed: "800+", depth: "3-8ft" },
+    statIcons: { completed: CheckCircle2, depth: Ruler },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahwarner.mp4",
   },
   {
@@ -89,15 +60,9 @@ const services = [
     icon: TreePine,
     title: "Land Clearing",
     shortTitle: "Clearing",
-    description:
-      "Complete lot clearing including tree removal, stump grinding, and debris hauling for new construction.",
-    features: [
-      "Selective clearing to preserve desired trees",
-      "Stump grinding 12-18 inches below grade",
-      "Brush chipping and mulch creation",
-      "Topsoil salvage and stockpiling",
-    ],
-    stats: { completed: "400+", avgSize: "1-10 acres" },
+    description: "Complete lot clearing with tree removal, stump grinding, and debris hauling.",
+    stats: { completed: "400+", scale: "1-10 acres" },
+    statIcons: { completed: CheckCircle2, scale: MapPin },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahvidmoody.mp4",
   },
 ]
@@ -108,18 +73,17 @@ export function ServicesShowcase() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const currentVideoRef = useRef<HTMLVideoElement>(null)
   const nextVideoRef = useRef<HTMLVideoElement>(null)
-  const tabsRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
 
   const activeService = services[activeIndex]
+  const ActiveIcon = activeService.icon
 
-  // Handle service tab change with smooth video crossfade
   const handleServiceChange = useCallback((index: number) => {
     if (index === activeIndex || isTransitioning) return
 
     setIsTransitioning(true)
     setIsVideoLoaded(false)
 
-    // Preload next video
     if (nextVideoRef.current) {
       nextVideoRef.current.src = services[index].video
       nextVideoRef.current.load()
@@ -129,247 +93,278 @@ export function ServicesShowcase() {
     setTimeout(() => {
       setActiveIndex(index)
       setIsTransitioning(false)
-    }, 600)
+    }, 500)
   }, [activeIndex, isTransitioning])
 
-  // Keyboard navigation (Arrow keys)
+  const handlePrev = () => {
+    const newIndex = activeIndex === 0 ? services.length - 1 : activeIndex - 1
+    handleServiceChange(newIndex)
+  }
+
+  const handleNext = () => {
+    const newIndex = activeIndex === services.length - 1 ? 0 : activeIndex + 1
+    handleServiceChange(newIndex)
+  }
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
         e.preventDefault()
-        const newIndex = activeIndex === 0 ? services.length - 1 : activeIndex - 1
-        handleServiceChange(newIndex)
+        handlePrev()
       } else if (e.key === "ArrowRight") {
         e.preventDefault()
-        const newIndex = activeIndex === services.length - 1 ? 0 : activeIndex + 1
-        handleServiceChange(newIndex)
+        handleNext()
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [activeIndex, handleServiceChange])
+  }, [activeIndex])
 
-  // Video loaded handler
   const handleVideoLoaded = () => {
     setIsVideoLoaded(true)
   }
 
   return (
-    <section id="services" className="relative min-h-screen py-20 md:py-24">
-      {/* Background with enhanced glassmorphism */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-black" />
-      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.015] mix-blend-overlay" />
+    <section ref={sectionRef} id="services" className="relative min-h-[85vh] w-full overflow-hidden">
+      {/* Full-Screen Video Background */}
+      <div className="absolute inset-0">
+        {!isVideoLoaded && (
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 animate-pulse" />
+        )}
 
-      <div className="container relative z-10">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <Pill variant="dark" className="mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            OUR SERVICES
-          </Pill>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sentient mb-4 text-foreground animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-            Professional <i className="font-light">Excavation</i> Services
-          </h2>
-          <p className="font-mono text-sm md:text-base text-foreground/60 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-            From residential foundations to commercial site work, we deliver quality excavation solutions tailored to
-            your project needs.
-          </p>
-        </div>
+        <video
+          ref={currentVideoRef}
+          key={`current-${activeService.id}`}
+          src={activeService.video}
+          className={cn(
+            "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
+            isTransitioning ? "opacity-0" : "opacity-100"
+          )}
+          autoPlay
+          muted
+          loop
+          playsInline
+          onLoadedData={handleVideoLoaded}
+        />
 
-        {/* Horizontal Tabs */}
-        <div
-          ref={tabsRef}
-          className="flex flex-wrap justify-center gap-3 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300"
-          role="tablist"
-          aria-label="Service categories"
-        >
-          {services.map((service, index) => {
-            const Icon = service.icon
-            const isActive = index === activeIndex
+        <video
+          ref={nextVideoRef}
+          className={cn(
+            "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
+            isTransitioning ? "opacity-100" : "opacity-0"
+          )}
+          muted
+          loop
+          playsInline
+          preload="auto"
+        />
 
-            return (
-              <button
-                key={service.id}
-                onClick={() => handleServiceChange(index)}
-                role="tab"
-                aria-selected={isActive}
-                aria-controls={`service-panel-${service.id}`}
-                tabIndex={isActive ? 0 : -1}
+        {/* Darker overlay for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-black/70 pointer-events-none" />
+      </div>
+
+      {/* Top Frosted Glass Frame */}
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 via-black/30 to-transparent backdrop-blur-sm border-b border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] pointer-events-none" />
+
+      {/* Content */}
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Header - Clean & Simple */}
+        <div className="pt-24 md:pt-32 px-6">
+          <div className="flex items-center justify-center gap-4 md:gap-6 mb-3">
+            {/* Clean Icon Badge */}
+            <div className="relative">
+              <div
                 className={cn(
-                  "group relative px-5 py-3 rounded-full font-mono text-sm font-medium transition-all duration-300 ease-out",
-                  "backdrop-blur-xl border overflow-hidden",
-                  "hover:scale-105 active:scale-95",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black",
-                  isActive
-                    ? "bg-white/15 border-primary shadow-[0_0_20px_rgba(220,38,38,0.4),0_0_40px_rgba(220,38,38,0.2)] text-white scale-105"
-                    : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                  "relative size-12 md:size-16 rounded-full backdrop-blur-xl bg-white/10 border-2 border-white/20 shadow-2xl flex items-center justify-center transition-all duration-300",
+                  isTransitioning && "scale-95 opacity-50"
                 )}
               >
-                {/* Ripple effect background */}
-                <span className="absolute inset-0 overflow-hidden rounded-full">
-                  <span
-                    className={cn(
-                      "absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent",
-                      "translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"
-                    )}
-                  />
-                </span>
-
-                {/* Content */}
-                <span className="relative flex items-center gap-2">
-                  <Icon className={cn(
-                    "size-4 transition-transform duration-300",
-                    isActive && "scale-110"
-                  )} />
-                  <span className="max-sm:hidden">{service.shortTitle}</span>
-                  <span className="sm:hidden">{service.shortTitle.slice(0, 4)}</span>
-                </span>
-
-                {/* Active indicator glow */}
-                {isActive && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse" />
-                )}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Video Showcase with Content Overlay */}
-        <div
-          id={`service-panel-${activeService.id}`}
-          role="tabpanel"
-          aria-labelledby={`tab-${activeService.id}`}
-          className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-black/50 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-400"
-          style={{ perspective: "1000px" }}
-        >
-          {/* Glow effect */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 blur-3xl opacity-30 -z-10" />
-
-          {/* Video Container */}
-          <div className="relative h-[70vh] bg-black overflow-hidden">
-            {/* Loading skeleton */}
-            {!isVideoLoaded && (
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/10 animate-pulse" />
-            )}
-
-            {/* Current video */}
-            <video
-              ref={currentVideoRef}
-              key={`current-${activeService.id}`}
-              src={activeService.video}
-              className={cn(
-                "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
-                isTransitioning ? "opacity-0" : "opacity-100"
-              )}
-              autoPlay
-              muted
-              loop
-              playsInline
-              onLoadedData={handleVideoLoaded}
-            />
-
-            {/* Next video (for crossfade) */}
-            <video
-              ref={nextVideoRef}
-              className={cn(
-                "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
-                isTransitioning ? "opacity-100" : "opacity-0"
-              )}
-              muted
-              loop
-              playsInline
-              preload="auto"
-            />
-
-            {/* Vignette overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
-
-            {/* Top gradient for depth */}
-            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
-
-            {/* Content Overlay - Bottom */}
-            <div className="absolute inset-x-0 bottom-0 p-6 md:p-10">
-              <div className="max-w-4xl">
-                {/* Glassmorphic content card */}
-                <div
+                <ActiveIcon
                   className={cn(
-                    "backdrop-blur-2xl bg-gradient-to-br from-black/80 via-black/70 to-black/60",
-                    "border border-white/10 rounded-2xl p-6 md:p-8",
-                    "shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
-                    "transition-all duration-600",
-                    isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
+                    "size-6 md:size-8 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.6)] transition-all duration-300",
+                    isTransitioning && "scale-75"
                   )}
-                >
-                  {/* Icon and Title */}
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="p-3 rounded-xl bg-primary/20 border border-primary/30 backdrop-blur-sm">
-                      <activeService.icon className="size-8 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl md:text-3xl font-sentient text-white mb-2">
-                        {activeService.title}
-                      </h3>
-                      <p className="font-mono text-sm md:text-base text-white/70">
-                        {activeService.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="flex flex-wrap gap-4 mb-6">
-                    {Object.entries(activeService.stats).map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10"
-                      >
-                        <span className="font-mono text-xs text-white/50 uppercase tracking-wider mr-2">
-                          {key.replace(/([A-Z])/g, ' $1').trim()}:
-                        </span>
-                        <span className="font-mono text-sm font-semibold text-white">
-                          {value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Features */}
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {activeService.features.map((feature, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start gap-2 group"
-                      >
-                        <CheckCircle2 className="size-5 text-primary mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                        <span className="font-mono text-xs md:text-sm text-white/80 group-hover:text-white transition-colors">
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                />
               </div>
             </div>
 
-            {/* Decorative elements */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+            {/* Title - Clean */}
+            <div className="text-center">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-sentient text-white drop-shadow-2xl mb-1">
+                Our <i className="font-light">Services</i>
+              </h2>
+              <p className="font-mono text-xs md:text-sm text-white/70 tracking-wide">
+                Built to last, designed to exceed expectations
+              </p>
+            </div>
           </div>
-
-          {/* Bottom reflection/shadow */}
-          <div
-            className="absolute -bottom-8 left-0 right-0 h-16 bg-primary/5 blur-2xl"
-            style={{ transform: "rotateX(80deg)" }}
-          />
         </div>
 
-        {/* Keyboard navigation hint */}
-        <div className="mt-8 text-center">
-          <p className="font-mono text-xs text-white/40">
-            Use <kbd className="px-2 py-1 bg-white/5 border border-white/10 rounded">←</kbd> and{" "}
-            <kbd className="px-2 py-1 bg-white/5 border border-white/10 rounded">→</kbd> to navigate
-          </p>
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Bottom Content - Floating with Shadow */}
+        <div className="px-4 md:px-6 pb-6 md:pb-10">
+          <div className="max-w-5xl mx-auto">
+            {/* Shadow base - creates lift effect */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-black/40 blur-2xl rounded-3xl" style={{ transform: 'translateY(8px)' }} />
+
+              {/* Unified Glass Container */}
+              <div className="relative backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.15)]">
+
+                {/* Top inner glow */}
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+                {/* Tab Bar - Contained */}
+                <div className="border-b border-white/10 px-2 py-2 flex items-center gap-1 overflow-x-auto scrollbar-hide bg-white/5">
+                  {services.map((service, index) => {
+                    const Icon = service.icon
+                    const isActive = index === activeIndex
+
+                    return (
+                      <button
+                        key={service.id}
+                        onClick={() => handleServiceChange(index)}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs md:text-sm whitespace-nowrap transition-all duration-300 relative",
+                          isActive
+                            ? "bg-white/20 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]"
+                            : "text-white/50 hover:text-white hover:bg-white/10"
+                        )}
+                      >
+                        <Icon className="size-4" />
+                        <span className="hidden sm:inline relative">{service.shortTitle}</span>
+                      </button>
+                    )
+                  })}
+
+                  {/* Counter - Integrated */}
+                  <div className="ml-auto pl-4 pr-2 flex items-center gap-2">
+                    <span className="font-mono text-xs text-white/40">
+                      {String(activeIndex + 1).padStart(2, '0')}/{String(services.length).padStart(2, '0')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content Area - Clean Layout */}
+                <div
+                  className={cn(
+                    "p-5 md:p-6 transition-all duration-500",
+                    isTransitioning ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"
+                  )}
+                >
+                  <div className="flex flex-col md:flex-row md:items-start gap-5">
+
+                    {/* Left: Icon + Title + Description */}
+                    <div className="flex-1 flex gap-4">
+                      <div className="shrink-0 p-3 rounded-xl bg-white/10 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+                        <activeService.icon className="size-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl md:text-2xl font-sentient text-white mb-2">
+                          {activeService.title}
+                        </h3>
+                        <p className="font-mono text-sm text-white/70 leading-relaxed max-w-lg">
+                          {activeService.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right: Stats - Vertical Stack with Icons */}
+                    <div className="flex md:flex-col gap-3 md:gap-2 md:min-w-[140px]">
+                      {Object.entries(activeService.stats).map(([key, value], idx) => {
+                        const StatIcon = activeService.statIcons[key as keyof typeof activeService.statIcons]
+                        if (!StatIcon) return null
+                        return (
+                          <div
+                            key={key}
+                            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-300 hover:bg-white/10 hover:border-white/20"
+                          >
+                            <StatIcon className="size-4 text-white/40 shrink-0" />
+                            <div className="text-right md:text-left">
+                              <div className="font-mono text-lg font-semibold text-white tabular-nums">{value}</div>
+                              <div className="font-mono text-[10px] text-white/40 uppercase tracking-wider">
+                                {key}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* CTA Button */}
+                  <div className="mt-6 flex justify-center">
+                    <a
+                      href="#contact"
+                      className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white font-mono text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+                    >
+                      <span>Get Free Estimate</span>
+                      <ArrowRight className="size-4" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Navigation Bar */}
+                <div className="border-t border-white/10 px-4 py-3 flex items-center justify-between bg-white/5">
+                  <button
+                    onClick={handlePrev}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all font-mono text-xs group"
+                  >
+                    <ArrowLeft className="size-4 group-hover:-translate-x-0.5 transition-transform" />
+                    <span className="hidden sm:inline">Previous</span>
+                  </button>
+
+                  {/* Progress Dots */}
+                  <div className="flex items-center gap-1.5">
+                    {services.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleServiceChange(index)}
+                        className={cn(
+                          "transition-all duration-300 rounded-full",
+                          index === activeIndex
+                            ? "w-6 h-1.5 bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                            : "w-1.5 h-1.5 bg-white/30 hover:bg-white/50 hover:scale-125"
+                        )}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={handleNext}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all font-mono text-xs group"
+                  >
+                    <span className="hidden sm:inline">Next</span>
+                    <ArrowRight className="size-4 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </div>
+
+                {/* Bottom inner glow */}
+                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              </div>
+            </div>
+
+            {/* Scroll Hint */}
+            <div className="flex justify-center mt-6">
+              <div className="flex flex-col items-center animate-bounce">
+                <ChevronDown className="size-5 text-white/30" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Bottom Curved Shadow - Creates depth transition */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-32 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 100% 100% at 50% 100%, rgba(0,0,0,0.6) 0%, transparent 70%)',
+        }}
+      />
+
     </section>
   )
 }

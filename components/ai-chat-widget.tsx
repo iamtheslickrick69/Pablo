@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { X, Send, HardHat } from "lucide-react"
+import { X, Send } from "lucide-react"
 
 interface Message {
   role: "user" | "assistant"
@@ -52,6 +52,29 @@ function getAIResponse(message: string): string {
   return "That's a great question! For specific project details, I'd recommend chatting directly with Paul. You can text him at (801) 706-3783 or schedule a free consultation through our website. Is there anything else I can help with?"
 }
 
+function ShovelIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      {/* Blade */}
+      <path d="M3 21L9 15L11 17L5 23C4.5 23.5 3.5 23.5 3 23C2.5 22.5 2.5 21.5 3 21Z" fill="currentColor" />
+      {/* Handle connection */}
+      <path d="M9 15L15 9" />
+      {/* Handle */}
+      <path d="M15 9L21 3" />
+      {/* Grip */}
+      <circle cx="17" cy="7" r="1.5" fill="currentColor" />
+    </svg>
+  )
+}
+
 export function AIChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>(initialMessages)
@@ -95,97 +118,107 @@ export function AIChatWidget() {
 
   return (
     <>
-      {/* Chat Button */}
+      {/* Chat Button - Dark Frosted Glass */}
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-6 right-6 z-50 size-14 rounded-full bg-primary text-background flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300",
+          "fixed bottom-6 right-6 z-50 size-16 rounded-full backdrop-blur-2xl bg-black/80 border-2 border-white/20 text-white shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_16px_rgba(255,255,255,0.1)] hover:bg-black/90 hover:border-white/30 hover:shadow-[0_12px_48px_rgba(0,0,0,0.5),0_0_24px_rgba(255,255,255,0.2)] transition-all duration-300 flex items-center justify-center hover:scale-110 group",
           isOpen && "scale-0 opacity-0",
         )}
         aria-label="Open chat"
       >
-        <HardHat className="size-7" />
+        <ShovelIcon className="size-7 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.5)] transition-all" />
+        {/* Pulse ring */}
+        <span className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping" />
       </button>
 
-      {/* Chat Window */}
+      {/* Chat Window - Dark Frosted Glass */}
       <div
         className={cn(
-          "fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-48px)] h-[500px] max-h-[calc(100vh-100px)] bg-background border border-border/50 shadow-2xl flex flex-col transition-all duration-300 origin-bottom-right",
+          "fixed bottom-6 right-6 z-50 w-[420px] max-w-[calc(100vw-48px)] backdrop-blur-2xl bg-black/80 rounded-3xl shadow-[0_16px_64px_rgba(0,0,0,0.6),0_0_32px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)] border-2 border-white/20 overflow-hidden transition-all duration-300 origin-bottom-right",
           isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none",
         )}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border/50">
+        {/* Header - Frosted Glass */}
+        <div className="relative px-5 py-5 flex items-center justify-between border-b border-white/10 bg-white/5 backdrop-blur-xl">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center">
-              <HardHat className="size-5 text-primary" />
+            <div className="size-12 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
+              <ShovelIcon className="size-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
             </div>
             <div>
-              <p className="font-sentient font-medium">Pablo</p>
-              <p className="font-mono text-xs text-foreground/50">Excavation Assistant</p>
+              <p className="font-sentient text-white font-medium">Pablo</p>
+              <div className="flex items-center gap-2">
+                <span className="size-2 bg-green-400 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
+                <p className="text-xs text-white/60 font-mono">Online</p>
+              </div>
             </div>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="size-8 flex items-center justify-center text-foreground/60 hover:text-foreground transition-colors"
+            className="size-10 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white/70 hover:text-white transition-all duration-300 flex items-center justify-center"
             aria-label="Close chat"
           >
             <X className="size-5" />
           </button>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Messages - Frosted Glass */}
+        <div className="h-96 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-black/40 to-black/60">
           {messages.map((message, index) => (
-            <div
-              key={index}
-              className={cn(
-                "max-w-[85%] p-3 rounded-lg",
-                message.role === "assistant" ? "bg-border/20 mr-auto" : "bg-primary/10 ml-auto",
-              )}
-            >
-              <p className="font-mono text-sm text-foreground/80">{message.content}</p>
+            <div key={index} className={cn("flex", message.role === "user" ? "justify-end" : "justify-start")}>
+              <div
+                className={cn(
+                  "max-w-[85%] p-4 rounded-2xl font-mono text-sm backdrop-blur-xl transition-all duration-300",
+                  message.role === "user"
+                    ? "bg-white/90 text-black shadow-[0_4px_16px_rgba(255,255,255,0.2)]"
+                    : "bg-white/10 border border-white/20 text-white/90 shadow-[0_4px_16px_rgba(0,0,0,0.2)]",
+                )}
+              >
+                {message.content}
+              </div>
             </div>
           ))}
           {isTyping && (
-            <div className="max-w-[85%] p-3 rounded-lg bg-border/20 mr-auto">
-              <div className="flex gap-1">
-                <span
-                  className="size-2 rounded-full bg-foreground/40 animate-bounce"
-                  style={{ animationDelay: "0ms" }}
-                />
-                <span
-                  className="size-2 rounded-full bg-foreground/40 animate-bounce"
-                  style={{ animationDelay: "150ms" }}
-                />
-                <span
-                  className="size-2 rounded-full bg-foreground/40 animate-bounce"
-                  style={{ animationDelay: "300ms" }}
-                />
+            <div className="flex justify-start">
+              <div className="backdrop-blur-xl bg-white/10 border border-white/20 p-4 rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
+                <div className="flex gap-1.5">
+                  <span
+                    className="size-2.5 bg-white/60 rounded-full animate-bounce shadow-[0_0_4px_rgba(255,255,255,0.3)]"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <span
+                    className="size-2.5 bg-white/60 rounded-full animate-bounce shadow-[0_0_4px_rgba(255,255,255,0.3)]"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <span
+                    className="size-2.5 bg-white/60 rounded-full animate-bounce shadow-[0_0_4px_rgba(255,255,255,0.3)]"
+                    style={{ animationDelay: "300ms" }}
+                  />
+                </div>
               </div>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <div className="p-4 border-t border-border/50">
-          <div className="flex gap-2">
+        {/* Input - Frosted Glass */}
+        <div className="p-5 border-t border-white/10 bg-white/5 backdrop-blur-xl">
+          <div className="flex gap-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask about excavation..."
-              className="flex-1 bg-border/20 border border-border/30 rounded-lg px-4 py-2 font-mono text-sm focus:outline-none focus:border-primary/50 transition-colors"
+              className="flex-1 px-5 py-3.5 border-2 border-white/20 backdrop-blur-xl bg-white/10 rounded-2xl font-mono text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/[0.15] transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
             />
             <button
               onClick={handleSend}
               disabled={!input.trim() || isTyping}
-              className="size-10 bg-primary text-background rounded-lg flex items-center justify-center hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-3.5 backdrop-blur-xl bg-white/90 hover:bg-white text-black rounded-2xl disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-[0_4px_16px_rgba(255,255,255,0.2)] hover:shadow-[0_6px_24px_rgba(255,255,255,0.3)] hover:scale-105 flex items-center justify-center"
               aria-label="Send message"
             >
-              <Send className="size-4" />
+              <Send className="size-5" />
             </button>
           </div>
         </div>

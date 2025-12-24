@@ -32,7 +32,7 @@ export function Hero() {
               </h1>
             </div>
 
-            <p className="font-mono text-sm sm:text-base text-foreground/60 text-balance max-w-[540px] lg:max-w-none">
+            <p className="font-mono text-sm sm:text-base text-white text-balance max-w-[540px] lg:max-w-none">
               Expert excavation services for residential and commercial projects. Quality craftsmanship, reliable timelines,
               competitive pricing.
             </p>
@@ -57,46 +57,53 @@ export function Hero() {
             />
 
             {/* Stacked CTA Buttons */}
-            <div className="flex flex-col gap-3 w-full max-w-[280px]">
-              <a href={`sms:8017063783?body=${smsTemplate}`} className="w-full">
-                <Button
-                  className="w-full justify-start"
-                  size="lg"
-                  onMouseEnter={() => setHovering(true)}
-                  onMouseLeave={() => setHovering(false)}
+            <div className="flex flex-col gap-4 w-full max-w-[360px]">
+              <a
+                href={`sms:8017063783?body=${smsTemplate}`}
+                className="group relative w-full overflow-hidden"
+                onMouseEnter={() => setHovering(true)}
+                onMouseLeave={() => setHovering(false)}
+              >
+                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.1)]"
+                  style={{
+                    clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
+                  }}
                 >
-                  <MessageSquare className="size-5" />
-                  Text Us
-                </Button>
+                  <MessageSquare className="size-5 text-white shrink-0" strokeWidth={2} />
+                  <span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Text Us</span>
+                </div>
               </a>
 
               <a
                 href={`mailto:paulbunker@gmail.com?subject=Excavation%20Services%20Inquiry&body=${emailTemplate}`}
-                className="w-full"
+                className="group relative w-full overflow-hidden"
+                onMouseEnter={() => setHovering(true)}
+                onMouseLeave={() => setHovering(false)}
               >
-                <Button
-                  variant="default"
-                  className="w-full justify-start"
-                  size="lg"
-                  onMouseEnter={() => setHovering(true)}
-                  onMouseLeave={() => setHovering(false)}
+                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.1)]"
+                  style={{
+                    clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
+                  }}
                 >
-                  <Mail className="size-5" />
-                  Email Us
-                </Button>
+                  <Mail className="size-5 text-white shrink-0" strokeWidth={2} />
+                  <span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Email Us</span>
+                </div>
               </a>
 
-              <a href="#contact" className="w-full">
-                <Button
-                  variant="default"
-                  className="w-full justify-start"
-                  size="lg"
-                  onMouseEnter={() => setHovering(true)}
-                  onMouseLeave={() => setHovering(false)}
+              <a
+                href="#contact"
+                className="group relative w-full overflow-hidden"
+                onMouseEnter={() => setHovering(true)}
+                onMouseLeave={() => setHovering(false)}
+              >
+                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.1)]"
+                  style={{
+                    clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
+                  }}
                 >
-                  <Calendar className="size-5" />
-                  Schedule
-                </Button>
+                  <Calendar className="size-5 text-white shrink-0" strokeWidth={2} />
+                  <span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Schedule</span>
+                </div>
               </a>
             </div>
 
