@@ -32,36 +32,32 @@ export const Header = () => {
     <div
       className={cn(
         "fixed z-50 top-0 left-0 w-full transition-all duration-400 ease-out",
-        scrolled ? "py-3" : "py-5 md:py-6",
+        scrolled ? "py-3" : "py-4 md:py-5",
       )}
     >
-      <div className="container">
+      <div className="container flex justify-center">
         <header
           className={cn(
-            "flex items-center justify-between transition-all duration-400 rounded-xl px-4 md:px-6 relative",
+            "flex items-center justify-between transition-all duration-400 rounded-xl px-4 md:px-6 relative w-full max-w-4xl",
             scrolled
-              ? "bg-black/80 backdrop-blur-xl py-3 shadow-[0_0_0_1px_rgba(255,255,255,0.1),0_0_15px_rgba(220,38,38,0.12),0_8px_24px_rgba(0,0,0,0.4)]"
-              : "bg-black/40 backdrop-blur-md py-4 border border-white/10",
+              ? "bg-black/80 backdrop-blur-xl py-2.5 shadow-[0_0_0_1px_rgba(255,255,255,0.1),0_0_15px_rgba(220,38,38,0.12),0_8px_24px_rgba(0,0,0,0.4)]"
+              : "bg-black/40 backdrop-blur-md py-3 border border-white/10",
           )}
         >
           {/* Logo Badge */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div
               className={cn(
-                "relative transition-all duration-400 rounded-lg border border-white/20 bg-white/10 backdrop-blur-sm overflow-hidden group-hover:border-white/30 group-hover:bg-white/15",
-                scrolled ? "w-12 h-12" : "w-14 h-14",
+                "relative transition-all duration-400 rounded-lg border border-white/20 bg-black overflow-hidden group-hover:border-white/30",
+                scrolled ? "w-10 h-10" : "w-12 h-12",
               )}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
               <Image
                 src="/whitelogo.png"
                 alt="Bunker Excavation"
-                width={56}
-                height={56}
-                className="w-full h-full object-contain p-2 transition-transform duration-400 group-hover:scale-110"
-                style={{
-                  filter: "brightness(0) invert(1)",
-                }}
+                width={48}
+                height={48}
+                className="w-full h-full object-contain p-1.5 transition-transform duration-400 group-hover:scale-110"
               />
             </div>
             <span
@@ -75,10 +71,10 @@ export const Header = () => {
           </Link>
 
           {/* Center Navigation */}
-          <nav className="flex max-lg:hidden items-center justify-center gap-x-6">
+          <nav className="flex max-lg:hidden items-center justify-center gap-x-4">
             {navItems.map((item) => (
               <Link
-                className="uppercase inline-block font-mono text-xs tracking-wide duration-200 transition-colors ease-out text-white/60 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+                className="uppercase inline-block font-mono text-[11px] tracking-wide duration-200 transition-colors ease-out text-white/60 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
                 href={item.href}
                 key={item.name}
               >
@@ -88,15 +84,15 @@ export const Header = () => {
           </nav>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2 max-lg:hidden">
+          <div className="flex items-center gap-1.5 max-lg:hidden">
             <a href={`sms:8017063783?body=${smsTemplate}`}>
               <Button
                 variant="ghost"
                 size="sm"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 backdrop-blur-sm text-white gap-2"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 backdrop-blur-sm text-white gap-1.5 h-8 px-3"
               >
-                <MessageSquare className="size-4" />
-                <span className="max-xl:hidden">Text</span>
+                <MessageSquare className="size-3.5" />
+                <span className="max-xl:hidden text-[11px]">Text</span>
               </Button>
             </a>
 
@@ -104,10 +100,10 @@ export const Header = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="bg-primary/20 hover:bg-primary/30 border border-primary/40 hover:border-primary/60 backdrop-blur-sm text-white gap-2 animate-pulse hover:animate-none"
+                className="bg-primary/20 hover:bg-primary/30 border border-primary/40 hover:border-primary/60 backdrop-blur-sm text-white gap-1.5 animate-pulse hover:animate-none h-8 px-3"
               >
-                <Phone className="size-4" />
-                <span className="max-xl:hidden">Call</span>
+                <Phone className="size-3.5" />
+                <span className="max-xl:hidden text-[11px]">Call</span>
               </Button>
             </a>
           </div>
