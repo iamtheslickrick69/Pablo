@@ -2,8 +2,7 @@
 
 import { Hero } from "@/components/hero"
 import { TrustBar } from "@/components/sections/trust-bar"
-import { VideoShowcase } from "@/components/sections/video-showcase"
-import { Services } from "@/components/sections/services"
+import { ServicesShowcase } from "@/components/sections/services-showcase"
 import { WhyUs } from "@/components/sections/why-us"
 import { About } from "@/components/sections/about"
 import { Process } from "@/components/sections/process"
@@ -19,8 +18,7 @@ export default function Home() {
     <>
       <Hero />
       <TrustBar />
-      <VideoShowcase />
-      <Services />
+      <ServicesShowcase />
       <WhyUs />
       <About />
       <Process />
