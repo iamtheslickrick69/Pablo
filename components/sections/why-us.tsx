@@ -1,9 +1,11 @@
 "use client"
 
 import { Shield, Award, Clock, BadgeCheck, Zap, Wrench, Users } from "lucide-react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Image from "next/image"
+import { motion, useScroll, useTransform } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { StaggerContainer, StaggerItem } from "@/components/animations/stagger-container"
 
 // Grouped reasons by category
 const categories = {
@@ -73,13 +75,27 @@ const stats = [
 export function WhyUs() {
   const [activeTab, setActiveTab] = useState<"experience" | "trust" | "performance">("experience")
   const [expandedStat, setExpandedStat] = useState<number | null>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  })
+
+  // Parallax effects
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, 100])
+  const headerY = useTransform(scrollYProgress, [0, 1], [50, -50])
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.5, 1, 1, 0.5])
 
   const activeReasons = categories[activeTab]
 
   return (
-    <section id="why-us" className="relative overflow-hidden">
+    <section ref={sectionRef} id="why-us" className="relative overflow-hidden">
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
+      <motion.div
+        className="absolute inset-0 z-0"
+        style={{ y: backgroundY }}
+      >
         <Image
           src="/excavator-site.jpg"
           alt="Excavation site background"
@@ -90,11 +106,14 @@ export function WhyUs() {
         />
         {/* Dark overlay for readability */}
         <div className="absolute inset-0 bg-black/60" />
-      </div>
+      </motion.div>
 
       <div className="container relative z-10 py-24 md:py-32">
         {/* Header */}
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-12"
+          style={{ y: headerY, opacity: headerOpacity }}
+        >
           {/* Frosted Glass Pill */}
           <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full border border-white/20 bg-white/10 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
             <span className="size-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
@@ -106,7 +125,7 @@ export function WhyUs() {
           <h2 className="text-4xl md:text-5xl font-sentient mb-8 text-white font-light drop-shadow-[0_2px_8px_rgba(255,255,255,0.1)]">
             The Bunker <span className="font-normal">Difference</span>
           </h2>
-        </div>
+        </motion.div>
 
         {/* Frosted Glass Tab Navigation */}
         <div className="max-w-3xl mx-auto mb-12">
@@ -155,11 +174,18 @@ export function WhyUs() {
         {/* Active Tab Content - Frosted Glass Cards */}
         <div className="max-w-5xl mx-auto mb-12">
           <div className="grid md:grid-cols-2 gap-6">
-            {activeReasons.map((reason, index) => (
-              <div
-                key={`${activeTab}-${index}`}
-                className="group relative rounded-3xl border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] p-8 md:p-10 transition-all duration-300 hover:bg-white/[0.15] hover:border-white/30 hover:-translate-y-1 overflow-hidden"
-              >
+            <StaggerContainer staggerDelay={0.15} initialDelay={0.2} className="contents">
+              {activeReasons.map((reason, index) => (
+                <StaggerItem key={`${activeTab}-${index}`}>
+                  <motion.div
+                    className="group relative rounded-3xl border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] p-8 md:p-10 transition-all duration-300 overflow-hidden"
+                    whileHover={{
+                      y: -8,
+                      backgroundColor: "rgba(255,255,255,0.15)",
+                      borderColor: "rgba(255,255,255,0.35)",
+                      scale: 1.02
+                    }}
+                  >
                 {/* Shimmer effect on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
 
@@ -186,8 +212,10 @@ export function WhyUs() {
                     {reason.details}
                   </p>
                 </div>
-              </div>
-            ))}
+                  </motion.div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
           </div>
         </div>
 

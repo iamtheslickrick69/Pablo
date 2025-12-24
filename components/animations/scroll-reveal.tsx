@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, useReducedMotion } from "framer-motion"
 import { useRef } from "react"
 
 interface ScrollRevealProps {
@@ -20,6 +20,7 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const shouldReduceMotion = useReducedMotion()
 
   const directionOffset = {
     up: { y: 40 },
@@ -28,25 +29,23 @@ export function ScrollReveal({
     right: { x: -40 },
   }
 
+  // If user prefers reduced motion, just fade in without movement
+  const initial = shouldReduceMotion
+    ? { opacity: 0 }
+    : { opacity: 0, ...directionOffset[direction] }
+
+  const animate = shouldReduceMotion
+    ? isInView ? { opacity: 1 } : {}
+    : isInView ? { opacity: 1, x: 0, y: 0 } : {}
+
   return (
     <motion.div
       ref={ref}
-      initial={{
-        opacity: 0,
-        ...directionOffset[direction],
-      }}
-      animate={
-        isInView
-          ? {
-              opacity: 1,
-              x: 0,
-              y: 0,
-            }
-          : {}
-      }
+      initial={initial}
+      animate={animate}
       transition={{
-        duration,
-        delay,
+        duration: shouldReduceMotion ? 0.3 : duration,
+        delay: shouldReduceMotion ? 0 : delay,
         ease: [0.21, 0.47, 0.32, 0.98],
       }}
       className={className}

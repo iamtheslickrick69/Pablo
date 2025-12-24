@@ -1,10 +1,22 @@
 "use client"
 
 import { MessageSquare, Mail, Calendar } from "lucide-react"
+import { motion, useScroll, useTransform } from "framer-motion"
+import { useRef } from "react"
 
 export function About() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  })
+
+  // Parallax effects
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50])
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.5, 1, 1, 0.5])
+
   return (
-    <section id="about" className="relative">
+    <section ref={sectionRef} id="about" className="relative">
       {/* Sophisticated Black & White About Section */}
       <div className="relative bg-black py-24 md:py-32">
         {/* Top Border Accent */}
@@ -26,12 +38,18 @@ export function About() {
                     <span className="font-mono text-xs tracking-wider text-white/70 uppercase">About Us</span>
                   </div>
 
-                  <h2 className="text-4xl sm:text-5xl md:text-6xl font-sentient text-white leading-tight">
+                  <motion.h2
+                    className="text-4xl sm:text-5xl md:text-6xl font-sentient text-white leading-tight"
+                    style={{ y, opacity }}
+                  >
                     Meet <i className="font-light">Paul Bunker</i>
-                  </h2>
+                  </motion.h2>
 
                   {/* Decorative Line */}
-                  <div className="mt-8 w-16 h-px bg-white/30" />
+                  <motion.div
+                    className="mt-8 w-16 h-px bg-white/30"
+                    style={{ opacity }}
+                  />
                 </div>
               </div>
 
@@ -50,50 +68,71 @@ export function About() {
 
                 {/* CTA Buttons */}
                 <div className="mt-10 flex flex-col gap-3 w-full sm:max-w-sm">
-                  <a
+                  <motion.a
                     href="sms:8017063783?body=Hey%20Paul%2C%20I%20would%20like%20some%20help%20with%20your%20excavation%20services."
                     className="group relative overflow-hidden w-full"
+                    whileHover={{ scale: 1.02, x: 3 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <div
-                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                    <motion.div
+                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)]"
+                      whileHover={{
+                        backgroundColor: "rgba(255,255,255,0.2)",
+                        borderColor: "rgba(239,68,68,0.5)",
+                        boxShadow: "0 8px 32px rgba(239,68,68,0.2)"
+                      }}
                       style={{
                         clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
                       }}
                     >
                       <MessageSquare className="size-4 text-white shrink-0" strokeWidth={2} />
                       <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">Text Us</span>
-                    </div>
-                  </a>
+                    </motion.div>
+                  </motion.a>
 
-                  <a
+                  <motion.a
                     href="mailto:paulbunker@gmail.com?subject=Excavation%20Services%20Inquiry&body=Hey%20Paul%2C%20I%20would%20like%20some%20help%20with%20your%20excavation%20services."
                     className="group relative overflow-hidden w-full"
+                    whileHover={{ scale: 1.02, x: 3 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <div
-                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                    <motion.div
+                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)]"
+                      whileHover={{
+                        backgroundColor: "rgba(255,255,255,0.2)",
+                        borderColor: "rgba(239,68,68,0.5)",
+                        boxShadow: "0 8px 32px rgba(239,68,68,0.2)"
+                      }}
                       style={{
                         clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
                       }}
                     >
                       <Mail className="size-4 text-white shrink-0" strokeWidth={2} />
                       <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">Email Us</span>
-                    </div>
-                  </a>
+                    </motion.div>
+                  </motion.a>
 
-                  <a
+                  <motion.a
                     href="#contact"
                     className="group relative overflow-hidden w-full"
+                    whileHover={{ scale: 1.02, x: 3 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <div
-                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                    <motion.div
+                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)]"
+                      whileHover={{
+                        backgroundColor: "rgba(255,255,255,0.2)",
+                        borderColor: "rgba(239,68,68,0.5)",
+                        boxShadow: "0 8px 32px rgba(239,68,68,0.2)"
+                      }}
                       style={{
                         clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
                       }}
                     >
                       <Calendar className="size-4 text-white shrink-0" strokeWidth={2} />
                       <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">Schedule</span>
-                    </div>
-                  </a>
+                    </motion.div>
+                  </motion.a>
                 </div>
               </div>
             </div>

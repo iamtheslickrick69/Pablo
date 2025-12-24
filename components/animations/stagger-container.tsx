@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, useReducedMotion } from "framer-motion"
 import { useRef } from "react"
 
 interface StaggerContainerProps {
@@ -18,6 +18,7 @@ export function StaggerContainer({
 }: StaggerContainerProps) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const shouldReduceMotion = useReducedMotion()
 
   return (
     <motion.div
@@ -28,8 +29,8 @@ export function StaggerContainer({
         hidden: {},
         visible: {
           transition: {
-            staggerChildren: staggerDelay,
-            delayChildren: initialDelay,
+            staggerChildren: shouldReduceMotion ? 0 : staggerDelay,
+            delayChildren: shouldReduceMotion ? 0 : initialDelay,
           },
         },
       }}
@@ -47,6 +48,8 @@ interface StaggerItemProps {
 }
 
 export function StaggerItem({ children, className, direction = "up" }: StaggerItemProps) {
+  const shouldReduceMotion = useReducedMotion()
+
   const directionOffset = {
     up: { y: 30 },
     down: { y: -30 },
@@ -54,22 +57,33 @@ export function StaggerItem({ children, className, direction = "up" }: StaggerIt
     right: { x: -30 },
   }
 
+  const hiddenVariant = shouldReduceMotion
+    ? { opacity: 0 }
+    : { opacity: 0, ...directionOffset[direction] }
+
+  const visibleVariant = shouldReduceMotion
+    ? {
+        opacity: 1,
+        transition: {
+          duration: 0.2,
+          ease: "easeOut",
+        },
+      }
+    : {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        transition: {
+          duration: 0.6,
+          ease: [0.21, 0.47, 0.32, 0.98],
+        },
+      }
+
   return (
     <motion.div
       variants={{
-        hidden: {
-          opacity: 0,
-          ...directionOffset[direction],
-        },
-        visible: {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          transition: {
-            duration: 0.6,
-            ease: [0.21, 0.47, 0.32, 0.98],
-          },
-        },
+        hidden: hiddenVariant,
+        visible: visibleVariant,
       }}
       className={className}
     >

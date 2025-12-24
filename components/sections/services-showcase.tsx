@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { Shovel, Home, Building2, Mountain, Droplets, TreePine, ChevronDown, ArrowLeft, ArrowRight, CheckCircle2, Ruler, MapPin } from "lucide-react"
+import { motion, useInView, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { StaggerContainer, StaggerItem } from "@/components/animations/stagger-container"
 
 const services = [
   {
@@ -250,27 +252,32 @@ export function ServicesShowcase() {
 
                 {/* Tab Bar - Contained */}
                 <div className="border-b border-white/10 px-2 py-2 flex items-center gap-1 overflow-x-auto scrollbar-hide bg-white/5">
-                  {services.map((service, index) => {
-                    const Icon = service.icon
-                    const isActive = index === activeIndex
+                  <StaggerContainer staggerDelay={0.05} initialDelay={0.2}>
+                    {services.map((service, index) => {
+                      const Icon = service.icon
+                      const isActive = index === activeIndex
 
-                    return (
-                      <button
-                        key={service.id}
-                        onClick={() => handleServiceChange(index)}
-                        className={cn(
-                          "flex items-center gap-2 px-4 py-3 md:py-2.5 rounded-xl font-mono text-xs md:text-sm whitespace-nowrap transition-all duration-300 relative min-h-[44px]",
-                          isActive
-                            ? "bg-white/20 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]"
-                            : "text-white/50 hover:text-white hover:bg-white/10"
-                        )}
-                        aria-label={service.title}
-                      >
-                        <Icon className="size-4" />
-                        <span className="hidden sm:inline relative">{service.shortTitle}</span>
-                      </button>
-                    )
-                  })}
+                      return (
+                        <StaggerItem key={service.id}>
+                          <motion.button
+                            onClick={() => handleServiceChange(index)}
+                            className={cn(
+                              "flex items-center gap-2 px-4 py-3 md:py-2.5 rounded-xl font-mono text-xs md:text-sm whitespace-nowrap transition-all duration-300 relative min-h-[44px]",
+                              isActive
+                                ? "bg-white/20 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]"
+                                : "text-white/50 hover:text-white hover:bg-white/10"
+                            )}
+                            whileHover={{ scale: 1.02, y: -1 }}
+                            whileTap={{ scale: 0.98 }}
+                            aria-label={service.title}
+                          >
+                            <Icon className="size-4" />
+                            <span className="hidden sm:inline relative">{service.shortTitle}</span>
+                          </motion.button>
+                        </StaggerItem>
+                      )
+                    })}
+                  </StaggerContainer>
 
                   {/* Counter - Integrated */}
                   <div className="ml-auto pl-4 pr-2 flex items-center gap-2">
@@ -304,71 +311,117 @@ export function ServicesShowcase() {
 
                         {/* Features List */}
                         <div className="flex flex-wrap gap-2 sm:gap-2.5 max-w-lg">
-                          {activeService.features.map((feature, idx) => (
-                            <div
-                              key={idx}
-                              className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-1.5 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm"
-                            >
-                              <CheckCircle2 className="size-4 sm:size-3.5 text-green-400" strokeWidth={2} />
-                              <span className="font-mono text-sm sm:text-xs text-white/90">{feature}</span>
-                            </div>
-                          ))}
+                          <StaggerContainer
+                            staggerDelay={0.08}
+                            initialDelay={0}
+                            className="flex flex-wrap gap-2 sm:gap-2.5"
+                          >
+                            {activeService.features.map((feature, idx) => (
+                              <StaggerItem key={idx}>
+                                <motion.div
+                                  className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-1.5 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm"
+                                  whileHover={{ scale: 1.05, y: -2, backgroundColor: "rgba(255,255,255,0.15)" }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  <CheckCircle2 className="size-4 sm:size-3.5 text-green-400" strokeWidth={2} />
+                                  <span className="font-mono text-sm sm:text-xs text-white/90">{feature}</span>
+                                </motion.div>
+                              </StaggerItem>
+                            ))}
+                          </StaggerContainer>
                         </div>
                       </div>
                     </div>
 
                     {/* Right: Stats - Vertical Stack with Icons */}
                     <div className="flex flex-col sm:flex-row md:flex-col gap-2 w-full md:w-auto md:min-w-[140px]">
-                      {Object.entries(activeService.stats).map(([key, value], idx) => {
-                        const StatIcon = activeService.statIcons[key as keyof typeof activeService.statIcons]
-                        if (!StatIcon) return null
-                        return (
-                          <div
-                            key={key}
-                            className="flex items-center gap-3 px-4 py-3 sm:py-2.5 rounded-xl bg-white/5 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-300 hover:bg-white/10 hover:border-white/20"
-                          >
-                            <StatIcon className="size-4 text-white/40 shrink-0" />
-                            <div className="text-left">
-                              <div className="font-mono text-lg font-semibold text-white tabular-nums">{value}</div>
-                              <div className="font-mono text-[10px] text-white/40 uppercase tracking-wider">
-                                {key}
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })}
+                      <StaggerContainer
+                        staggerDelay={0.1}
+                        initialDelay={0.15}
+                        className="flex flex-col sm:flex-row md:flex-col gap-2"
+                      >
+                        {Object.entries(activeService.stats).map(([key, value], idx) => {
+                          const StatIcon = activeService.statIcons[key as keyof typeof activeService.statIcons]
+                          if (!StatIcon) return null
+                          return (
+                            <StaggerItem key={key}>
+                              <motion.div
+                                className="flex items-center gap-3 px-4 py-3 sm:py-2.5 rounded-xl bg-white/5 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-300"
+                                whileHover={{
+                                  scale: 1.03,
+                                  y: -3,
+                                  backgroundColor: "rgba(255,255,255,0.1)",
+                                  borderColor: "rgba(255,255,255,0.25)"
+                                }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <StatIcon className="size-4 text-white/40 shrink-0" />
+                                <div className="text-left">
+                                  <div className="font-mono text-lg font-semibold text-white tabular-nums">{value}</div>
+                                  <div className="font-mono text-[10px] text-white/40 uppercase tracking-wider">
+                                    {key}
+                                  </div>
+                                </div>
+                              </motion.div>
+                            </StaggerItem>
+                          )
+                        })}
+                      </StaggerContainer>
                     </div>
                   </div>
 
                   {/* CTA Button */}
                   <div className="mt-6 flex justify-center">
-                    <a
+                    <motion.a
                       href="#contact"
                       className="group relative overflow-hidden w-full sm:w-auto"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
-                      <div
-                        className="relative flex items-center justify-center gap-3 px-8 py-4 bg-white/20 backdrop-blur-xl border border-white/30 hover:bg-white/30 hover:border-red-500/50 transition-all duration-300 shadow-lg hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                      <motion.div
+                        className="relative flex items-center justify-center gap-3 px-8 py-4 bg-white/20 backdrop-blur-xl border border-white/30 transition-all duration-300 shadow-lg"
+                        whileHover={{
+                          backgroundColor: "rgba(255,255,255,0.3)",
+                          borderColor: "rgba(239,68,68,0.5)",
+                          boxShadow: "0 8px 32px rgba(239,68,68,0.2)"
+                        }}
                         style={{
                           clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
                         }}
                       >
                         <span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Get Free Estimate</span>
-                        <ArrowRight className="size-4 text-white" />
-                      </div>
-                    </a>
+                        <motion.div
+                          animate={{ x: [0, 3, 0] }}
+                          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                        >
+                          <ArrowRight className="size-4 text-white" />
+                        </motion.div>
+                      </motion.div>
+                    </motion.a>
                   </div>
                 </div>
 
                 {/* Navigation Bar */}
                 <div className="border-t border-white/10 px-4 py-3 flex items-center justify-between bg-white/5">
-                  <button
+                  <motion.button
                     onClick={handlePrev}
-                    className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all font-mono text-xs group"
+                    className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg text-white/50 transition-all font-mono text-xs"
+                    whileHover={{
+                      color: "rgba(255,255,255,1)",
+                      backgroundColor: "rgba(255,255,255,0.1)",
+                      x: -2
+                    }}
+                    whileTap={{ scale: 0.95 }}
                     aria-label="Previous service"
                   >
-                    <ArrowLeft className="size-4 group-hover:-translate-x-0.5 transition-transform" />
+                    <motion.div
+                      whileHover={{ x: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ArrowLeft className="size-4" />
+                    </motion.div>
                     <span className="hidden sm:inline">Previous</span>
-                  </button>
+                  </motion.button>
 
                   {/* Progress Dots */}
                   <div className="flex items-center gap-1.5">
@@ -387,14 +440,25 @@ export function ServicesShowcase() {
                     ))}
                   </div>
 
-                  <button
+                  <motion.button
                     onClick={handleNext}
-                    className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all font-mono text-xs group"
+                    className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg text-white/50 transition-all font-mono text-xs"
+                    whileHover={{
+                      color: "rgba(255,255,255,1)",
+                      backgroundColor: "rgba(255,255,255,0.1)",
+                      x: 2
+                    }}
+                    whileTap={{ scale: 0.95 }}
                     aria-label="Next service"
                   >
                     <span className="hidden sm:inline">Next</span>
-                    <ArrowRight className="size-4 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
+                    <motion.div
+                      whileHover={{ x: 2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ArrowRight className="size-4" />
+                    </motion.div>
+                  </motion.button>
                 </div>
 
                 {/* Bottom inner glow */}
