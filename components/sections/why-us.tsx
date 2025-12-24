@@ -114,11 +114,12 @@ export function WhyUs() {
             <button
               onClick={() => setActiveTab("experience")}
               className={cn(
-                "flex-1 px-6 py-4 font-mono text-xs font-bold uppercase tracking-wide transition-all duration-300",
+                "flex-1 px-6 py-4 min-h-[44px] font-mono text-xs font-bold uppercase tracking-wide transition-all duration-300",
                 activeTab === "experience"
                   ? "bg-white/20 text-white backdrop-blur-lg"
                   : "text-white/70 hover:bg-white/10 hover:text-white"
               )}
+              aria-label="Experience benefits"
             >
               Experience
             </button>
@@ -126,11 +127,12 @@ export function WhyUs() {
             <button
               onClick={() => setActiveTab("trust")}
               className={cn(
-                "flex-1 px-6 py-4 font-mono text-xs font-bold uppercase tracking-wide transition-all duration-300",
+                "flex-1 px-6 py-4 min-h-[44px] font-mono text-xs font-bold uppercase tracking-wide transition-all duration-300",
                 activeTab === "trust"
                   ? "bg-white/20 text-white backdrop-blur-lg"
                   : "text-white/70 hover:bg-white/10 hover:text-white"
               )}
+              aria-label="Trust and safety benefits"
             >
               Trust
             </button>
@@ -138,11 +140,12 @@ export function WhyUs() {
             <button
               onClick={() => setActiveTab("performance")}
               className={cn(
-                "flex-1 px-6 py-4 font-mono text-xs font-bold uppercase tracking-wide transition-all duration-300",
+                "flex-1 px-6 py-4 min-h-[44px] font-mono text-xs font-bold uppercase tracking-wide transition-all duration-300",
                 activeTab === "performance"
                   ? "bg-white/20 text-white backdrop-blur-lg"
                   : "text-white/70 hover:bg-white/10 hover:text-white"
               )}
+              aria-label="Performance benefits"
             >
               Performance
             </button>
@@ -201,13 +204,14 @@ export function WhyUs() {
                 <div
                   key={index}
                   className={cn(
-                    "p-8 text-center relative",
+                    "p-6 md:p-8 text-center relative",
                     index < stats.length - 1 && "border-r border-white/20"
                   )}
                 >
                   <button
                     onClick={() => setExpandedStat(expandedStat === index ? null : index)}
-                    className="w-full transition-all duration-300 group"
+                    className="w-full min-h-[44px] transition-all duration-300 group"
+                    aria-label={`View ${stat.label} details`}
                   >
                     <stat.icon
                       className={cn(

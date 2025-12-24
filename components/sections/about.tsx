@@ -49,13 +49,13 @@ export function About() {
                 </div>
 
                 {/* CTA Buttons */}
-                <div className="mt-10 flex flex-col gap-3 max-w-sm">
+                <div className="mt-10 flex flex-col gap-3 w-full sm:max-w-sm">
                   <a
                     href="sms:8017063783?body=Hey%20Paul%2C%20I%20would%20like%20some%20help%20with%20your%20excavation%20services."
-                    className="group relative overflow-hidden"
+                    className="group relative overflow-hidden w-full"
                   >
                     <div
-                      className="relative flex items-center gap-3 px-5 py-3 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
                       style={{
                         clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
                       }}
@@ -67,10 +67,10 @@ export function About() {
 
                   <a
                     href="mailto:paulbunker@gmail.com?subject=Excavation%20Services%20Inquiry&body=Hey%20Paul%2C%20I%20would%20like%20some%20help%20with%20your%20excavation%20services."
-                    className="group relative overflow-hidden"
+                    className="group relative overflow-hidden w-full"
                   >
                     <div
-                      className="relative flex items-center gap-3 px-5 py-3 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
                       style={{
                         clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
                       }}
@@ -82,10 +82,10 @@ export function About() {
 
                   <a
                     href="#contact"
-                    className="group relative overflow-hidden"
+                    className="group relative overflow-hidden w-full"
                   >
                     <div
-                      className="relative flex items-center gap-3 px-5 py-3 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                      className="relative flex items-center justify-center sm:justify-start gap-3 px-5 py-3 min-h-[44px] bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
                       style={{
                         clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
                       }}

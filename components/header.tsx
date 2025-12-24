@@ -9,15 +9,25 @@ import { Phone } from "lucide-react"
 
 export const Header = () => {
   const [scrolled, setScrolled] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
     }
 
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
     window.addEventListener("scroll", handleScroll)
+    window.addEventListener("resize", handleResize)
     handleScroll()
-    return () => window.removeEventListener("scroll", handleScroll)
+    handleResize()
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("resize", handleResize)
+    }
   }, [])
 
   const navItems = [
@@ -37,7 +47,7 @@ export const Header = () => {
       )}
     >
       <div className="container">
-        <div className="flex items-center justify-between py-3">
+        <div className="flex items-center justify-between py-3 md:py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <Image
@@ -46,7 +56,12 @@ export const Header = () => {
               width={280}
               height={105}
               className="transition-all duration-300 group-hover:scale-105 rounded-xl"
-              style={{ width: "auto", height: scrolled ? "40px" : "48px" }}
+              style={{
+                width: "auto",
+                height: scrolled
+                  ? isMobile ? "32px" : "40px"
+                  : isMobile ? "36px" : "48px"
+              }}
               priority
             />
           </Link>
