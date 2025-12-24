@@ -77,7 +77,7 @@ export function Hero() {
               alt="Bunker Excavation"
               width={360}
               height={135}
-              className="w-[280px] md:w-[360px] rounded-xl"
+              className="w-[280px] md:w-[360px] rounded-2xl shadow-lg"
               priority
             />
 

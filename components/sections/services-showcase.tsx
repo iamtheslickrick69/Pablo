@@ -236,7 +236,7 @@ export function ServicesShowcase() {
         <div className="flex-1" />
 
         {/* Bottom Content - Floating with Shadow */}
-        <div className="px-4 md:px-6 pb-6 md:pb-10">
+        <div className="px-6 md:px-6 pb-8 md:pb-10">
           <div className="max-w-5xl mx-auto">
             {/* Shadow base - creates lift effect */}
             <div className="relative">
@@ -259,11 +259,12 @@ export function ServicesShowcase() {
                         key={service.id}
                         onClick={() => handleServiceChange(index)}
                         className={cn(
-                          "flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs md:text-sm whitespace-nowrap transition-all duration-300 relative",
+                          "flex items-center gap-2 px-4 py-3 md:py-2.5 rounded-xl font-mono text-xs md:text-sm whitespace-nowrap transition-all duration-300 relative min-h-[44px]",
                           isActive
                             ? "bg-white/20 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]"
                             : "text-white/50 hover:text-white hover:bg-white/10"
                         )}
+                        aria-label={service.title}
                       >
                         <Icon className="size-4" />
                         <span className="hidden sm:inline relative">{service.shortTitle}</span>
@@ -282,11 +283,11 @@ export function ServicesShowcase() {
                 {/* Content Area - Clean Layout */}
                 <div
                   className={cn(
-                    "p-5 md:p-6 transition-all duration-500",
+                    "p-6 md:p-6 transition-all duration-500",
                     isTransitioning ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"
                   )}
                 >
-                  <div className="flex flex-col md:flex-row md:items-start gap-5">
+                  <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-5">
 
                     {/* Left: Icon + Title + Description */}
                     <div className="flex-1 flex gap-4">
@@ -294,22 +295,22 @@ export function ServicesShowcase() {
                         <activeService.icon className="size-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-xl md:text-2xl font-sentient text-white mb-2">
+                        <h3 className="text-xl md:text-2xl font-sentient text-white mb-3">
                           {activeService.title}
                         </h3>
-                        <p className="font-mono text-sm text-white/70 leading-relaxed max-w-lg mb-4">
+                        <p className="font-mono text-sm text-white/70 leading-relaxed max-w-lg mb-5">
                           {activeService.description}
                         </p>
 
                         {/* Features List */}
-                        <div className="flex flex-wrap gap-2 max-w-lg">
+                        <div className="flex flex-wrap gap-2 sm:gap-2.5 max-w-lg">
                           {activeService.features.map((feature, idx) => (
                             <div
                               key={idx}
-                              className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm"
+                              className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-1.5 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm"
                             >
-                              <CheckCircle2 className="size-3.5 text-green-400" strokeWidth={2} />
-                              <span className="font-mono text-xs text-white/90">{feature}</span>
+                              <CheckCircle2 className="size-4 sm:size-3.5 text-green-400" strokeWidth={2} />
+                              <span className="font-mono text-sm sm:text-xs text-white/90">{feature}</span>
                             </div>
                           ))}
                         </div>
@@ -317,17 +318,17 @@ export function ServicesShowcase() {
                     </div>
 
                     {/* Right: Stats - Vertical Stack with Icons */}
-                    <div className="flex md:flex-col gap-3 md:gap-2 md:min-w-[140px]">
+                    <div className="flex flex-col sm:flex-row md:flex-col gap-2 w-full md:w-auto md:min-w-[140px]">
                       {Object.entries(activeService.stats).map(([key, value], idx) => {
                         const StatIcon = activeService.statIcons[key as keyof typeof activeService.statIcons]
                         if (!StatIcon) return null
                         return (
                           <div
                             key={key}
-                            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-300 hover:bg-white/10 hover:border-white/20"
+                            className="flex items-center gap-3 px-4 py-3 sm:py-2.5 rounded-xl bg-white/5 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-300 hover:bg-white/10 hover:border-white/20"
                           >
                             <StatIcon className="size-4 text-white/40 shrink-0" />
-                            <div className="text-right md:text-left">
+                            <div className="text-left">
                               <div className="font-mono text-lg font-semibold text-white tabular-nums">{value}</div>
                               <div className="font-mono text-[10px] text-white/40 uppercase tracking-wider">
                                 {key}
@@ -343,10 +344,10 @@ export function ServicesShowcase() {
                   <div className="mt-6 flex justify-center">
                     <a
                       href="#contact"
-                      className="group relative overflow-hidden"
+                      className="group relative overflow-hidden w-full sm:w-auto"
                     >
                       <div
-                        className="relative flex items-center gap-3 px-8 py-4 bg-white/20 backdrop-blur-xl border border-white/30 hover:bg-white/30 hover:border-red-500/50 transition-all duration-300 shadow-lg hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                        className="relative flex items-center justify-center gap-3 px-8 py-4 bg-white/20 backdrop-blur-xl border border-white/30 hover:bg-white/30 hover:border-red-500/50 transition-all duration-300 shadow-lg hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
                         style={{
                           clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
                         }}
@@ -362,7 +363,8 @@ export function ServicesShowcase() {
                 <div className="border-t border-white/10 px-4 py-3 flex items-center justify-between bg-white/5">
                   <button
                     onClick={handlePrev}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all font-mono text-xs group"
+                    className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all font-mono text-xs group"
+                    aria-label="Previous service"
                   >
                     <ArrowLeft className="size-4 group-hover:-translate-x-0.5 transition-transform" />
                     <span className="hidden sm:inline">Previous</span>
@@ -375,18 +377,20 @@ export function ServicesShowcase() {
                         key={index}
                         onClick={() => handleServiceChange(index)}
                         className={cn(
-                          "transition-all duration-300 rounded-full",
+                          "transition-all duration-300 rounded-full p-2 -m-2",
                           index === activeIndex
                             ? "w-6 h-1.5 bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]"
                             : "w-1.5 h-1.5 bg-white/30 hover:bg-white/50 hover:scale-125"
                         )}
+                        aria-label={`Go to ${services[index].shortTitle}`}
                       />
                     ))}
                   </div>
 
                   <button
                     onClick={handleNext}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all font-mono text-xs group"
+                    className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all font-mono text-xs group"
+                    aria-label="Next service"
                   >
                     <span className="hidden sm:inline">Next</span>
                     <ArrowRight className="size-4 group-hover:translate-x-0.5 transition-transform" />

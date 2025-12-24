@@ -15,7 +15,7 @@ export function Footer() {
             alt="Bunker Excavation"
             width={180}
             height={68}
-            className="mx-auto mb-8 opacity-90"
+            className="mx-auto mb-8 opacity-90 rounded-xl"
           />
         </div>
       </div>

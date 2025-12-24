@@ -45,7 +45,7 @@ export const Header = () => {
               alt="Bunker Excavation"
               width={280}
               height={105}
-              className="transition-all duration-300 group-hover:scale-105"
+              className="transition-all duration-300 group-hover:scale-105 rounded-xl"
               style={{ width: "auto", height: scrolled ? "40px" : "48px" }}
               priority
             />
