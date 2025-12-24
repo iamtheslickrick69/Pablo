@@ -20,11 +20,11 @@ export function Hero() {
       <div className="pb-16 pt-32 mt-auto text-center relative">
         <div className="flex justify-center mb-8">
           <Image
-            src="/logo.png"
+            src="/whitelogo.png"
             alt="Bunker Excavation"
-            width={280}
-            height={112}
-            className="w-[200px] md:w-[280px]"
+            width={320}
+            height={120}
+            className="w-[240px] md:w-[320px]"
             priority
           />
         </div>

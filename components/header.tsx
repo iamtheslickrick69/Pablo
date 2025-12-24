@@ -40,14 +40,11 @@ export const Header = () => {
         >
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/logo.png"
+              src="/whitelogo.png"
               alt="Bunker Excavation"
-              width={scrolled ? 90 : 110}
-              height={scrolled ? 36 : 44}
+              width={scrolled ? 120 : 140}
+              height={scrolled ? 40 : 48}
               className="transition-all duration-300"
-              style={{
-                mixBlendMode: "screen",
-              }}
             />
           </Link>
           <nav className="flex max-lg:hidden items-center justify-center gap-x-8">
