@@ -1,0 +1,27 @@
+{
+  "company": {
+    "name": "Bunker Excavation",
+    "owner": "Paul Bunker",
+    "tagline": "Precision Excavation Built to Last",
+    "description": "Expert excavation services for residential and commercial projects. Quality craftsmanship, reliable timelines, competitive pricing."
+  },
+  "contact": {
+    "phone": "8017063783",
+    "phoneFormatted": "(801) 706-3783",
+    "email": "paulbunker@gmail.com",
+    "smsTemplate": "Hey Paul, I would like some help with your excavation services."
+  },
+  "location": {
+    "city": "St. George",
+    "county": "Washington County",
+    "state": "Utah",
+    "serviceArea": "St. George & Washington County, Utah",
+    "description": "St. George's desert terrain—caliche, volcanic rock, and extreme heat—demands specialized excavation expertise. Paul Bunker has spent years mastering these conditions, delivering precise work on time, every time."
+  },
+  "credentials": {
+    "licensed": true,
+    "insured": true,
+    "bonded": true,
+    "yearsExperience": 15
+  }
+}

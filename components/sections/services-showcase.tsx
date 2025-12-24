@@ -11,6 +11,7 @@ const services = [
     title: "Foundation Excavation",
     shortTitle: "Foundation",
     description: "Precise foundation digging with exact depth and grade specifications.",
+    features: ["Laser-guided accuracy", "Soil compaction testing", "Drainage integration"],
     stats: { completed: "500+", depth: "8-12ft" },
     statIcons: { completed: CheckCircle2, depth: Ruler },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahvid.mp4",
@@ -21,6 +22,7 @@ const services = [
     title: "Basement Excavation",
     shortTitle: "Basement",
     description: "Expert basement excavation with drainage planning and structural support.",
+    features: ["Waterproofing prep", "Rock hammer capability", "Egress window planning"],
     stats: { completed: "300+", depth: "10-14ft" },
     statIcons: { completed: CheckCircle2, depth: Ruler },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahwarner.mp4",
@@ -31,6 +33,7 @@ const services = [
     title: "Commercial Site Work",
     shortTitle: "Commercial",
     description: "Large-scale site preparation for commercial developments and facilities.",
+    features: ["Multi-phase coordination", "Heavy equipment fleet", "Permit assistance"],
     stats: { completed: "150+", scale: "5-50 acres" },
     statIcons: { completed: CheckCircle2, scale: MapPin },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahvidmoody.mp4",
@@ -41,6 +44,7 @@ const services = [
     title: "Land Grading",
     shortTitle: "Grading",
     description: "Professional land leveling for proper drainage and stable surfaces.",
+    features: ["GPS-guided grading", "Erosion control", "Final grade certification"],
     stats: { completed: "600+", accuracy: "±0.5in" },
     statIcons: { completed: CheckCircle2, accuracy: Ruler },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahvid.mp4",
@@ -51,6 +55,7 @@ const services = [
     title: "Utility Trenching",
     shortTitle: "Utility",
     description: "Accurate trenching for water, sewer, electrical, and drainage systems.",
+    features: ["Blue Stakes coordination", "Bedding & backfill", "Multiple utility runs"],
     stats: { completed: "800+", depth: "3-8ft" },
     statIcons: { completed: CheckCircle2, depth: Ruler },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahwarner.mp4",
@@ -61,6 +66,7 @@ const services = [
     title: "Land Clearing",
     shortTitle: "Clearing",
     description: "Complete lot clearing with tree removal, stump grinding, and debris hauling.",
+    features: ["Stump grinding", "Debris removal", "Topsoil preservation"],
     stats: { completed: "400+", scale: "1-10 acres" },
     statIcons: { completed: CheckCircle2, scale: MapPin },
     video: "https://pub-82e4016d6e17421ebc1eaa174644bee3.r2.dev/utahvidmoody.mp4",
@@ -71,12 +77,32 @@ export function ServicesShowcase() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
+  const [isSectionVisible, setIsSectionVisible] = useState(false)
   const currentVideoRef = useRef<HTMLVideoElement>(null)
   const nextVideoRef = useRef<HTMLVideoElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
 
   const activeService = services[activeIndex]
   const ActiveIcon = activeService.icon
+
+  // Intersection Observer to lazy load videos only when section is visible
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsSectionVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
 
   const handleServiceChange = useCallback((index: number) => {
     if (index === activeIndex || isTransitioning) return
@@ -133,35 +159,40 @@ export function ServicesShowcase() {
           <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 animate-pulse" />
         )}
 
-        <video
-          ref={currentVideoRef}
-          key={`current-${activeService.id}`}
-          src={activeService.video}
-          className={cn(
-            "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
-            isTransitioning ? "opacity-0" : "opacity-100"
-          )}
-          autoPlay
-          muted
-          loop
-          playsInline
-          onLoadedData={handleVideoLoaded}
-        />
+        {isSectionVisible && (
+          <>
+            <video
+              ref={currentVideoRef}
+              key={`current-${activeService.id}`}
+              src={activeService.video}
+              className={cn(
+                "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
+                isTransitioning ? "opacity-0" : "opacity-100"
+              )}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              onLoadedData={handleVideoLoaded}
+            />
 
-        <video
-          ref={nextVideoRef}
-          className={cn(
-            "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
-            isTransitioning ? "opacity-100" : "opacity-0"
-          )}
-          muted
-          loop
-          playsInline
-          preload="auto"
-        />
+            <video
+              ref={nextVideoRef}
+              className={cn(
+                "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
+                isTransitioning ? "opacity-100" : "opacity-0"
+              )}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          </>
+        )}
 
-        {/* Darker overlay for better readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-black/70 pointer-events-none" />
+        {/* Lighter overlay for better visibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/35 to-black/40 pointer-events-none" />
       </div>
 
       {/* Top Frosted Glass Frame */}
@@ -266,9 +297,22 @@ export function ServicesShowcase() {
                         <h3 className="text-xl md:text-2xl font-sentient text-white mb-2">
                           {activeService.title}
                         </h3>
-                        <p className="font-mono text-sm text-white/70 leading-relaxed max-w-lg">
+                        <p className="font-mono text-sm text-white/70 leading-relaxed max-w-lg mb-4">
                           {activeService.description}
                         </p>
+
+                        {/* Features List */}
+                        <div className="flex flex-wrap gap-2 max-w-lg">
+                          {activeService.features.map((feature, idx) => (
+                            <div
+                              key={idx}
+                              className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm"
+                            >
+                              <CheckCircle2 className="size-3.5 text-green-400" strokeWidth={2} />
+                              <span className="font-mono text-xs text-white/90">{feature}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
@@ -299,10 +343,17 @@ export function ServicesShowcase() {
                   <div className="mt-6 flex justify-center">
                     <a
                       href="#contact"
-                      className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white font-mono text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+                      className="group relative overflow-hidden"
                     >
-                      <span>Get Free Estimate</span>
-                      <ArrowRight className="size-4" />
+                      <div
+                        className="relative flex items-center gap-3 px-8 py-4 bg-white/20 backdrop-blur-xl border border-white/30 hover:bg-white/30 hover:border-red-500/50 transition-all duration-300 shadow-lg hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+                        style={{
+                          clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
+                        }}
+                      >
+                        <span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Get Free Estimate</span>
+                        <ArrowRight className="size-4 text-white" />
+                      </div>
                     </a>
                   </div>
                 </div>

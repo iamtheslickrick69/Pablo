@@ -1,21 +1,47 @@
 "use client"
 
 import Image from "next/image"
-import { GL } from "./gl"
+import dynamic from "next/dynamic"
 import { Pill } from "./pill"
 import { Button } from "./ui/button"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { MessageSquare, Mail, Calendar, MapPin } from "lucide-react"
+import { site, getSMSLink, getEmailLink, getPhoneLink } from "@/lib/cms"
+
+// Lazy load WebGL only when needed
+const GL = dynamic(() => import("./gl").then((mod) => ({ default: mod.GL })), {
+  ssr: false,
+  loading: () => null,
+})
 
 export function Hero() {
   const [hovering, setHovering] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const heroRef = useRef<HTMLDivElement>(null)
 
-  const smsTemplate = encodeURIComponent("Hey Paul, I would like some help with your excavation services.")
-  const emailTemplate = encodeURIComponent("Hey Paul, I would like some help with your excavation services.")
+  // Intersection Observer to detect when hero is in viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true)
+          // Once visible, we keep it loaded (don't unload)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (heroRef.current) {
+      observer.observe(heroRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <div className="flex flex-col min-h-svh justify-center">
-      <GL hovering={hovering} />
+    <div ref={heroRef} className="flex flex-col min-h-svh justify-center">
+      {isVisible && <GL hovering={hovering} />}
 
       <div className="container relative">
         {/* Mobile: Centered Stack | Desktop: Split Layout */}
@@ -27,20 +53,19 @@ export function Hero() {
               <Pill className="mb-6">PROFESSIONAL EXCAVATION</Pill>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-sentient text-balance">
-                Precision Excavation <br />
-                <i className="font-light">Built to Last</i>
+                {site.company.tagline.split(' ').slice(0, 2).join(' ')} <br />
+                <i className="font-light">{site.company.tagline.split(' ').slice(2).join(' ')}</i>
               </h1>
             </div>
 
             <p className="font-mono text-sm sm:text-base text-white text-balance max-w-[540px] lg:max-w-none">
-              Expert excavation services for residential and commercial projects. Quality craftsmanship, reliable timelines,
-              competitive pricing.
+              {site.company.description}
             </p>
 
             {/* Location Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 border border-white/20 bg-white/5 rounded-full backdrop-blur-sm">
               <MapPin className="size-4 text-primary" />
-              <span className="font-mono text-sm text-foreground/80">St. George & Washington County</span>
+              <span className="font-mono text-sm text-foreground/80">{site.location.serviceArea}</span>
             </div>
           </div>
 
@@ -59,12 +84,12 @@ export function Hero() {
             {/* Stacked CTA Buttons */}
             <div className="flex flex-col gap-4 w-full max-w-[360px]">
               <a
-                href={`sms:8017063783?body=${smsTemplate}`}
+                href={getSMSLink()}
                 className="group relative w-full overflow-hidden"
                 onMouseEnter={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
               >
-                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.1)]"
+                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
                   style={{
                     clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
                   }}
@@ -75,12 +100,12 @@ export function Hero() {
               </a>
 
               <a
-                href={`mailto:paulbunker@gmail.com?subject=Excavation%20Services%20Inquiry&body=${emailTemplate}`}
+                href={getEmailLink()}
                 className="group relative w-full overflow-hidden"
                 onMouseEnter={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
               >
-                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.1)]"
+                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
                   style={{
                     clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
                   }}
@@ -96,7 +121,7 @@ export function Hero() {
                 onMouseEnter={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
               >
-                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.1)]"
+                <div className="relative flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-red-500/50 transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
                   style={{
                     clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%)'
                   }}
@@ -109,10 +134,10 @@ export function Hero() {
 
             {/* Phone Number */}
             <a
-              href="tel:8017063783"
+              href={getPhoneLink()}
               className="font-mono text-lg text-foreground hover:text-primary transition-colors duration-200"
             >
-              (801) 706-3783
+              {site.contact.phoneFormatted}
             </a>
           </div>
 

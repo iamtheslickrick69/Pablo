@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "@eslint/eslintrc": "latest",
     "@expo/dom-webview": "latest",
     "@expo/metro-runtime": "latest",

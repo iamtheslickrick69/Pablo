@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { X, Send } from "lucide-react"
@@ -19,37 +18,13 @@ const initialMessages: Message[] = [
   },
 ]
 
-const quickResponses: Record<string, string> = {
-  cost: "Great question! Excavation costs vary based on the project. Foundation excavation typically runs $1,500-$5,000, while larger commercial projects can range higher. For an accurate quote, I'd recommend scheduling a free on-site estimate with Paul. Want me to help you set that up?",
-  price:
-    "Great question! Excavation costs vary based on the project. Foundation excavation typically runs $1,500-$5,000, while larger commercial projects can range higher. For an accurate quote, I'd recommend scheduling a free on-site estimate with Paul. Want me to help you set that up?",
-  estimate:
-    "We offer free on-site estimates! Paul will come out, assess your project, and give you a detailed quote with no obligation. You can text us at (801) 706-3783 or use the Schedule button on our site to set up a time.",
-  time: "Project timelines depend on scope. A residential foundation might take 1-3 days, while larger commercial work can take a week or more. Weather can also be a factor. We always provide timeline estimates upfront and keep you updated throughout.",
-  long: "Project timelines depend on scope. A residential foundation might take 1-3 days, while larger commercial work can take a week or more. Weather can also be a factor. We always provide timeline estimates upfront and keep you updated throughout.",
-  service:
-    "We offer a full range of excavation services: foundation excavation, basement digging, land grading, utility trenching, land clearing, and commercial site work. Is there a specific service you're interested in?",
-  contact:
-    "You can reach Paul directly at (801) 706-3783. Text or call anytime! You can also email paulbunker@gmail.com or use the contact buttons on our website.",
-  phone: "You can reach Paul directly at (801) 706-3783. Text or call anytime!",
-  schedule:
-    "Ready to schedule? You can text us at (801) 706-3783, or click the Schedule button on our site to book a consultation. Paul typically responds within a few hours.",
-  hello: "Hello! Great to meet you. How can I help with your excavation project today?",
-  hi: "Hi there! What excavation questions can I help you with?",
-  thanks: "You're welcome! Let me know if you have any other questions. Good luck with your project!",
-  thank: "You're welcome! Let me know if you have any other questions. Good luck with your project!",
-}
-
-function getAIResponse(message: string): string {
-  const lowerMessage = message.toLowerCase()
-
-  for (const [keyword, response] of Object.entries(quickResponses)) {
-    if (lowerMessage.includes(keyword)) {
-      return response
-    }
-  }
-
-  return "That's a great question! For specific project details, I'd recommend chatting directly with Paul. You can text him at (801) 706-3783 or schedule a free consultation through our website. Is there anything else I can help with?"
+// Helper function to convert markdown hyperlinks to HTML
+function renderMessageContent(content: string): string {
+  // Convert markdown links [text](#anchor) to clickable HTML links
+  return content.replace(
+    /\[([^\]]+)\]\((#[^)]+)\)/g,
+    '<a href="$2" class="text-blue-300 underline hover:text-blue-200 transition-colors">$1</a>'
+  )
 }
 
 function ShovelIcon({ className }: { className?: string }) {
@@ -91,22 +66,51 @@ export function AIChatWidget() {
   }, [messages])
 
   const handleSend = async () => {
-    if (!input.trim()) return
+    if (!input.trim() || isTyping) return
 
     const userMessage: Message = { role: "user", content: input }
     setMessages((prev) => [...prev, userMessage])
     setInput("")
     setIsTyping(true)
 
-    // Simulate AI thinking time
-    setTimeout(
-      () => {
-        const response = getAIResponse(input)
-        setMessages((prev) => [...prev, { role: "assistant", content: response }])
-        setIsTyping(false)
-      },
-      1000 + Math.random() * 1000,
-    )
+    try {
+      // Call the API route with conversation history
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMessage],
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to get response")
+      }
+
+      const data = await response.json()
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.message },
+      ])
+    } catch (error) {
+      console.error("Chat error:", error)
+
+      // Show friendly error message
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "Oops! I'm having trouble connecting right now. Please try again in a moment, or contact Paul directly at (801) 706-3783 for immediate assistance.",
+        },
+      ])
+    } finally {
+      setIsTyping(false)
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -147,80 +151,109 @@ export function AIChatWidget() {
             </div>
             <div>
               <p className="font-sentient text-white font-medium">Pablo</p>
-              <div className="flex items-center gap-2">
-                <span className="size-2 bg-green-400 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
-                <p className="text-xs text-white/60 font-mono">Online</p>
-              </div>
+              <p className="font-mono text-[10px] text-white/60 uppercase tracking-wider">
+                Excavation Assistant
+              </p>
             </div>
           </div>
+
           <button
             onClick={() => setIsOpen(false)}
-            className="size-10 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white/70 hover:text-white transition-all duration-300 flex items-center justify-center"
+            className="size-8 rounded-lg backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 text-white/70 hover:text-white transition-all duration-200 flex items-center justify-center"
             aria-label="Close chat"
           >
-            <X className="size-5" />
+            <X className="size-4" />
           </button>
         </div>
 
-        {/* Messages - Frosted Glass */}
-        <div className="h-96 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-black/40 to-black/60">
+        {/* Messages Container */}
+        <div className="h-[400px] overflow-y-auto px-5 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
           {messages.map((message, index) => (
-            <div key={index} className={cn("flex", message.role === "user" ? "justify-end" : "justify-start")}>
+            <div
+              key={index}
+              className={cn(
+                "flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300",
+                message.role === "user" ? "justify-end" : "justify-start",
+              )}
+            >
+              {message.role === "assistant" && (
+                <div className="size-8 shrink-0 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center mt-0.5">
+                  <ShovelIcon className="size-4 text-white" />
+                </div>
+              )}
+
               <div
                 className={cn(
-                  "max-w-[85%] p-4 rounded-2xl font-mono text-sm backdrop-blur-xl transition-all duration-300",
+                  "max-w-[75%] rounded-2xl px-4 py-3 font-mono text-sm leading-relaxed",
                   message.role === "user"
-                    ? "bg-white/90 text-black shadow-[0_4px_16px_rgba(255,255,255,0.2)]"
-                    : "bg-white/10 border border-white/20 text-white/90 shadow-[0_4px_16px_rgba(0,0,0,0.2)]",
+                    ? "bg-white/20 backdrop-blur-xl border border-white/30 text-white"
+                    : "bg-white/10 backdrop-blur-xl border border-white/20 text-white/90",
                 )}
               >
-                {message.content}
+                {message.role === "assistant" ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: renderMessageContent(message.content),
+                    }}
+                    className="space-y-2"
+                  />
+                ) : (
+                  message.content
+                )}
               </div>
             </div>
           ))}
+
+          {/* Typing Indicator */}
           {isTyping && (
-            <div className="flex justify-start">
-              <div className="backdrop-blur-xl bg-white/10 border border-white/20 p-4 rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
-                <div className="flex gap-1.5">
-                  <span
-                    className="size-2.5 bg-white/60 rounded-full animate-bounce shadow-[0_0_4px_rgba(255,255,255,0.3)]"
-                    style={{ animationDelay: "0ms" }}
-                  />
-                  <span
-                    className="size-2.5 bg-white/60 rounded-full animate-bounce shadow-[0_0_4px_rgba(255,255,255,0.3)]"
-                    style={{ animationDelay: "150ms" }}
-                  />
-                  <span
-                    className="size-2.5 bg-white/60 rounded-full animate-bounce shadow-[0_0_4px_rgba(255,255,255,0.3)]"
-                    style={{ animationDelay: "300ms" }}
-                  />
+            <div className="flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="size-8 shrink-0 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center">
+                <ShovelIcon className="size-4 text-white" />
+              </div>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3">
+                <div className="flex items-center gap-1">
+                  <div className="size-2 rounded-full bg-white/60 animate-bounce [animation-delay:-0.3s]" />
+                  <div className="size-2 rounded-full bg-white/60 animate-bounce [animation-delay:-0.15s]" />
+                  <div className="size-2 rounded-full bg-white/60 animate-bounce" />
                 </div>
               </div>
             </div>
           )}
+
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input - Frosted Glass */}
-        <div className="p-5 border-t border-white/10 bg-white/5 backdrop-blur-xl">
-          <div className="flex gap-3">
-            <input
-              type="text"
+        {/* Input Area - Frosted Glass */}
+        <div className="border-t border-white/10 p-4 bg-white/5 backdrop-blur-xl">
+          <div className="flex gap-2">
+            <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask about excavation..."
-              className="flex-1 px-5 py-3.5 border-2 border-white/20 backdrop-blur-xl bg-white/10 rounded-2xl font-mono text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/[0.15] transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
+              placeholder="Ask about excavation services..."
+              className="flex-1 px-4 py-3 rounded-xl backdrop-blur-xl bg-white/10 border border-white/20 focus:border-white/40 focus:bg-white/[0.15] text-white placeholder:text-white/40 font-mono text-sm resize-none outline-none transition-all duration-200 min-h-[44px] max-h-[120px]"
+              rows={1}
+              disabled={isTyping}
             />
             <button
               onClick={handleSend}
               disabled={!input.trim() || isTyping}
-              className="px-5 py-3.5 backdrop-blur-xl bg-white/90 hover:bg-white text-black rounded-2xl disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-[0_4px_16px_rgba(255,255,255,0.2)] hover:shadow-[0_6px_24px_rgba(255,255,255,0.3)] hover:scale-105 flex items-center justify-center"
+              className={cn(
+                "size-11 shrink-0 rounded-xl backdrop-blur-xl transition-all duration-200 flex items-center justify-center",
+                input.trim() && !isTyping
+                  ? "bg-white/20 hover:bg-white/30 border border-white/30 text-white hover:scale-105"
+                  : "bg-white/10 border border-white/20 text-white/40 cursor-not-allowed",
+              )}
               aria-label="Send message"
             >
-              <Send className="size-5" />
+              <Send className="size-4" />
             </button>
           </div>
+
+          {/* Disclaimer */}
+          <p className="mt-3 font-mono text-[9px] text-white/40 text-center leading-relaxed">
+            AI-powered assistant. For detailed quotes, contact Paul directly.
+          </p>
         </div>
       </div>
     </>
