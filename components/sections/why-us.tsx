@@ -173,19 +173,18 @@ export function WhyUs() {
 
         {/* Active Tab Content - Frosted Glass Cards */}
         <div className="max-w-5xl mx-auto mb-12">
-          <div className="grid md:grid-cols-2 gap-6">
-            <StaggerContainer staggerDelay={0.15} initialDelay={0.2} className="contents">
-              {activeReasons.map((reason, index) => (
-                <StaggerItem key={`${activeTab}-${index}`}>
-                  <motion.div
-                    className="group relative rounded-3xl border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] p-8 md:p-10 transition-all duration-300 overflow-hidden"
-                    whileHover={{
-                      y: -8,
-                      backgroundColor: "rgba(255,255,255,0.15)",
-                      borderColor: "rgba(255,255,255,0.35)",
-                      scale: 1.02
-                    }}
-                  >
+          <StaggerContainer staggerDelay={0.15} initialDelay={0.1} className="grid md:grid-cols-2 gap-6">
+            {activeReasons.map((reason, index) => (
+              <StaggerItem key={`${activeTab}-${index}`}>
+                <motion.div
+                  className="group relative rounded-3xl border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] p-8 md:p-10 transition-all duration-300 overflow-hidden h-full"
+                  whileHover={{
+                    y: -8,
+                    backgroundColor: "rgba(255,255,255,0.15)",
+                    borderColor: "rgba(255,255,255,0.35)",
+                    scale: 1.02
+                  }}
+                >
                 {/* Shimmer effect on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
 
@@ -212,11 +211,10 @@ export function WhyUs() {
                     {reason.details}
                   </p>
                 </div>
-                  </motion.div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-          </div>
+                </motion.div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
         </div>
 
         {/* Certified & Protected - Frosted Glass Bar */}
