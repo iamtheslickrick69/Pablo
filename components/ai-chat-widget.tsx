@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
 import { X, Send } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -56,15 +56,97 @@ export function AIChatWidget() {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
+  const [keyboardHeight, setKeyboardHeight] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+  const [viewportHeight, setViewportHeight] = useState(0)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Handle visual viewport for keyboard detection (iOS Safari + Android)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleViewportChange = () => {
+      if (window.visualViewport) {
+        const vv = window.visualViewport
+        const windowHeight = window.innerHeight
+        const viewportH = vv.height
+        const keyboardH = Math.max(0, windowHeight - viewportH)
+
+        setKeyboardHeight(keyboardH)
+        setViewportHeight(viewportH)
+
+        // Scroll to keep input visible when keyboard opens
+        if (keyboardH > 0 && isOpen && inputRef.current) {
+          setTimeout(() => {
+            inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+          }, 100)
+        }
+      }
+    }
+
+    // Set initial viewport height
+    setViewportHeight(window.visualViewport?.height || window.innerHeight)
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleViewportChange)
+      window.visualViewport.addEventListener('scroll', handleViewportChange)
+    }
+
+    // Fallback for older browsers
+    window.addEventListener('resize', handleViewportChange)
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleViewportChange)
+        window.visualViewport.removeEventListener('scroll', handleViewportChange)
+      }
+      window.removeEventListener('resize', handleViewportChange)
+    }
+  }, [isOpen])
+
+  // Prevent body scroll when chat is open on mobile
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      const scrollY = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.left = '0'
+      document.body.style.right = '0'
+      document.body.style.overflow = 'hidden'
+
+      return () => {
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.left = ''
+        document.body.style.right = ''
+        document.body.style.overflow = ''
+        window.scrollTo(0, scrollY)
+      }
+    }
+  }, [isMobile, isOpen])
+
+  const scrollToBottom = useCallback(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
+  }, [])
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages, scrollToBottom])
 
   const handleSend = async () => {
     if (!input.trim() || isTyping) return
@@ -121,6 +203,41 @@ export function AIChatWidget() {
     }
   }
 
+  // Handle input focus for mobile
+  const handleInputFocus = () => {
+    if (isMobile) {
+      // Small delay to let keyboard appear
+      setTimeout(() => {
+        scrollToBottom()
+        inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      }, 300)
+    }
+  }
+
+  // Close chat handler
+  const handleClose = () => {
+    // Blur input first to dismiss keyboard
+    inputRef.current?.blur()
+    setTimeout(() => setIsOpen(false), 50)
+  }
+
+  // Calculate dynamic height for mobile
+  const getChatHeight = () => {
+    if (!isMobile) return 'auto'
+    const safeAreaBottom = 20
+    const maxHeight = viewportHeight > 0 ? viewportHeight - safeAreaBottom : window.innerHeight - safeAreaBottom
+    return `${Math.min(maxHeight, 600)}px`
+  }
+
+  // Calculate messages container height
+  const getMessagesHeight = () => {
+    if (!isMobile) return '400px'
+    // Account for header (~80px), input area (~120px), and safe areas
+    const availableHeight = viewportHeight > 0 ? viewportHeight : window.innerHeight
+    const otherElements = 200 // header + input + padding
+    return `${Math.max(150, availableHeight - otherElements - keyboardHeight)}px`
+  }
+
   return (
     <>
       {/* Chat Button - Dark Frosted Glass */}
@@ -128,7 +245,7 @@ export function AIChatWidget() {
         {!isOpen && (
           <motion.button
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 size-16 rounded-full backdrop-blur-2xl bg-black/80 border-2 border-white/20 text-white shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_16px_rgba(255,255,255,0.1)] hover:bg-black/90 hover:border-white/30 hover:shadow-[0_12px_48px_rgba(0,0,0,0.5),0_0_24px_rgba(255,255,255,0.2)] flex items-center justify-center group"
+            className="fixed bottom-6 right-6 z-50 size-16 rounded-full backdrop-blur-2xl bg-black/80 border-2 border-white/20 text-white shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_16px_rgba(255,255,255,0.1)] hover:bg-black/90 hover:border-white/30 hover:shadow-[0_12px_48px_rgba(0,0,0,0.5),0_0_24px_rgba(255,255,255,0.2)] flex items-center justify-center group touch-manipulation"
             aria-label="Open chat"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -144,129 +261,182 @@ export function AIChatWidget() {
         )}
       </AnimatePresence>
 
-      {/* Chat Window - Dark Frosted Glass */}
+      {/* Chat Window - Dark Frosted Glass with Mobile Optimization */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            className="fixed bottom-6 right-6 z-50 w-[420px] max-w-[calc(100vw-48px)] backdrop-blur-2xl bg-black/80 rounded-3xl shadow-[0_16px_64px_rgba(0,0,0,0.6),0_0_32px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)] border-2 border-white/20 overflow-hidden"
-            initial={{ scale: 0.8, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.8, opacity: 0, y: 20 }}
-            transition={{ duration: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
-          >
-        {/* Header - Frosted Glass */}
-        <div className="relative px-5 py-5 flex items-center justify-between border-b border-white/10 bg-white/5 backdrop-blur-xl">
-          <div className="flex items-center gap-3">
-            <div className="size-12 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
-              <ShovelIcon className="size-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
-            </div>
-            <div>
-              <p className="font-sentient text-white font-medium">Pablo</p>
-              <p className="font-mono text-[10px] text-white/60 uppercase tracking-wider">
-                Excavation Assistant
-              </p>
-            </div>
-          </div>
+          <>
+            {/* Mobile backdrop overlay */}
+            {isMobile && (
+              <motion.div
+                className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={handleClose}
+              />
+            )}
 
-          <button
-            onClick={() => setIsOpen(false)}
-            className="size-8 rounded-lg backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 text-white/70 hover:text-white transition-all duration-200 flex items-center justify-center"
-            aria-label="Close chat"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-
-        {/* Messages Container */}
-        <div className="h-[400px] overflow-y-auto px-5 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
-          {messages.map((message, index) => (
-            <div
-              key={index}
+            <motion.div
+              ref={chatContainerRef}
               className={cn(
-                "flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300",
-                message.role === "user" ? "justify-end" : "justify-start",
+                "fixed z-50 backdrop-blur-2xl bg-black/95 shadow-[0_16px_64px_rgba(0,0,0,0.6),0_0_32px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)] border-2 border-white/20 overflow-hidden flex flex-col",
+                // Mobile: full width with safe areas, Desktop: positioned bottom-right
+                isMobile
+                  ? "inset-x-0 bottom-0 rounded-t-3xl rounded-b-none border-b-0 max-h-[100dvh]"
+                  : "bottom-6 right-6 w-[420px] max-w-[calc(100vw-48px)] rounded-3xl"
               )}
+              style={{
+                height: isMobile ? getChatHeight() : 'auto',
+                paddingBottom: isMobile ? `env(safe-area-inset-bottom, 0px)` : 0,
+              }}
+              initial={{ scale: isMobile ? 1 : 0.8, opacity: 0, y: isMobile ? '100%' : 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: isMobile ? 1 : 0.8, opacity: 0, y: isMobile ? '100%' : 20 }}
+              transition={{ duration: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
             >
-              {message.role === "assistant" && (
-                <div className="size-8 shrink-0 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center mt-0.5">
-                  <ShovelIcon className="size-4 text-white" />
+              {/* Mobile drag handle */}
+              {isMobile && (
+                <div className="flex justify-center pt-2 pb-1">
+                  <div className="w-10 h-1 rounded-full bg-white/30" />
                 </div>
               )}
 
+              {/* Header - Frosted Glass */}
+              <div className="relative px-4 sm:px-5 py-4 flex items-center justify-between border-b border-white/10 bg-white/5 backdrop-blur-xl shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 sm:size-12 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
+                    <ShovelIcon className="size-5 sm:size-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+                  </div>
+                  <div>
+                    <p className="font-sentient text-white font-medium text-sm sm:text-base">Pablo</p>
+                    <p className="font-mono text-[9px] sm:text-[10px] text-white/60 uppercase tracking-wider">
+                      Excavation Assistant
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleClose}
+                  className="size-9 sm:size-8 rounded-lg backdrop-blur-xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/20 hover:border-white/30 text-white/70 hover:text-white transition-all duration-200 flex items-center justify-center touch-manipulation"
+                  aria-label="Close chat"
+                >
+                  <X className="size-5 sm:size-4" />
+                </button>
+              </div>
+
+              {/* Messages Container - Scrollable */}
               <div
-                className={cn(
-                  "max-w-[75%] rounded-2xl px-4 py-3 font-mono text-sm leading-relaxed",
-                  message.role === "user"
-                    ? "bg-white/20 backdrop-blur-xl border border-white/30 text-white"
-                    : "bg-white/10 backdrop-blur-xl border border-white/20 text-white/90",
-                )}
+                ref={messagesContainerRef}
+                className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-4 overscroll-contain"
+                style={{
+                  height: isMobile ? getMessagesHeight() : '400px',
+                  minHeight: '150px',
+                  WebkitOverflowScrolling: 'touch',
+                }}
               >
-                {message.role === "assistant" ? (
+                {messages.map((message, index) => (
                   <div
-                    dangerouslySetInnerHTML={{
-                      __html: renderMessageContent(message.content),
-                    }}
-                    className="space-y-2"
-                  />
-                ) : (
-                  message.content
+                    key={index}
+                    className={cn(
+                      "flex gap-2 sm:gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300",
+                      message.role === "user" ? "justify-end" : "justify-start",
+                    )}
+                  >
+                    {message.role === "assistant" && (
+                      <div className="size-7 sm:size-8 shrink-0 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center mt-0.5">
+                        <ShovelIcon className="size-3.5 sm:size-4 text-white" />
+                      </div>
+                    )}
+
+                    <div
+                      className={cn(
+                        "max-w-[80%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 font-mono text-[13px] sm:text-sm leading-relaxed",
+                        message.role === "user"
+                          ? "bg-white/20 backdrop-blur-xl border border-white/30 text-white"
+                          : "bg-white/10 backdrop-blur-xl border border-white/20 text-white/90",
+                      )}
+                    >
+                      {message.role === "assistant" ? (
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: renderMessageContent(message.content),
+                          }}
+                          className="space-y-2 [&_a]:text-blue-300 [&_a]:underline"
+                        />
+                      ) : (
+                        message.content
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Typing Indicator */}
+                {isTyping && (
+                  <div className="flex gap-2 sm:gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="size-7 sm:size-8 shrink-0 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center">
+                      <ShovelIcon className="size-3.5 sm:size-4 text-white" />
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <div className="size-2 rounded-full bg-white/60 animate-bounce [animation-delay:-0.3s]" />
+                        <div className="size-2 rounded-full bg-white/60 animate-bounce [animation-delay:-0.15s]" />
+                        <div className="size-2 rounded-full bg-white/60 animate-bounce" />
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </div>
-            </div>
-          ))}
 
-          {/* Typing Indicator */}
-          {isTyping && (
-            <div className="flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <div className="size-8 shrink-0 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center">
-                <ShovelIcon className="size-4 text-white" />
+                <div ref={messagesEndRef} />
               </div>
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3">
-                <div className="flex items-center gap-1">
-                  <div className="size-2 rounded-full bg-white/60 animate-bounce [animation-delay:-0.3s]" />
-                  <div className="size-2 rounded-full bg-white/60 animate-bounce [animation-delay:-0.15s]" />
-                  <div className="size-2 rounded-full bg-white/60 animate-bounce" />
+
+              {/* Input Area - Frosted Glass with keyboard awareness */}
+              <div
+                className="border-t border-white/10 p-3 sm:p-4 bg-white/5 backdrop-blur-xl shrink-0"
+                style={{
+                  paddingBottom: isMobile ? `max(12px, env(safe-area-inset-bottom, 12px))` : undefined,
+                }}
+              >
+                <div className="flex gap-2">
+                  <textarea
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    onFocus={handleInputFocus}
+                    placeholder="Ask about excavation services..."
+                    className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl backdrop-blur-xl bg-white/10 border border-white/20 focus:border-white/40 focus:bg-white/[0.15] text-white placeholder:text-white/40 font-mono text-[15px] sm:text-sm resize-none outline-none transition-all duration-200 min-h-[44px] max-h-[100px] touch-manipulation"
+                    rows={1}
+                    disabled={isTyping}
+                    autoComplete="off"
+                    autoCorrect="on"
+                    autoCapitalize="sentences"
+                    enterKeyHint="send"
+                  />
+                  <button
+                    onClick={handleSend}
+                    disabled={!input.trim() || isTyping}
+                    className={cn(
+                      "size-11 shrink-0 rounded-xl backdrop-blur-xl transition-all duration-200 flex items-center justify-center touch-manipulation active:scale-95",
+                      input.trim() && !isTyping
+                        ? "bg-white/20 hover:bg-white/30 active:bg-white/40 border border-white/30 text-white"
+                        : "bg-white/10 border border-white/20 text-white/40 cursor-not-allowed",
+                    )}
+                    aria-label="Send message"
+                  >
+                    <Send className="size-4" />
+                  </button>
                 </div>
+
+                {/* Disclaimer - hidden when keyboard is open on mobile */}
+                <p className={cn(
+                  "mt-2 sm:mt-3 font-mono text-[9px] text-white/40 text-center leading-relaxed transition-opacity duration-200",
+                  keyboardHeight > 100 && "opacity-0 h-0 mt-0 overflow-hidden"
+                )}>
+                  AI-powered assistant. For detailed quotes, contact Paul directly.
+                </p>
               </div>
-            </div>
-          )}
-
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Area - Frosted Glass */}
-        <div className="border-t border-white/10 p-4 bg-white/5 backdrop-blur-xl">
-          <div className="flex gap-2">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask about excavation services..."
-              className="flex-1 px-4 py-3 rounded-xl backdrop-blur-xl bg-white/10 border border-white/20 focus:border-white/40 focus:bg-white/[0.15] text-white placeholder:text-white/40 font-mono text-sm resize-none outline-none transition-all duration-200 min-h-[44px] max-h-[120px]"
-              rows={1}
-              disabled={isTyping}
-            />
-            <button
-              onClick={handleSend}
-              disabled={!input.trim() || isTyping}
-              className={cn(
-                "size-11 shrink-0 rounded-xl backdrop-blur-xl transition-all duration-200 flex items-center justify-center",
-                input.trim() && !isTyping
-                  ? "bg-white/20 hover:bg-white/30 border border-white/30 text-white hover:scale-105"
-                  : "bg-white/10 border border-white/20 text-white/40 cursor-not-allowed",
-              )}
-              aria-label="Send message"
-            >
-              <Send className="size-4" />
-            </button>
-          </div>
-
-          {/* Disclaimer */}
-          <p className="mt-3 font-mono text-[9px] text-white/40 text-center leading-relaxed">
-            AI-powered assistant. For detailed quotes, contact Paul directly.
-          </p>
-        </div>
-      </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
