@@ -80,6 +80,7 @@ export function ServicesShowcase() {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const [isSectionVisible, setIsSectionVisible] = useState(false)
+  const [videoError, setVideoError] = useState(false)
   const currentVideoRef = useRef<HTMLVideoElement>(null)
   const nextVideoRef = useRef<HTMLVideoElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
@@ -88,6 +89,7 @@ export function ServicesShowcase() {
   const ActiveIcon = activeService.icon
 
   // Intersection Observer to lazy load videos only when section is visible
+  // Use smaller threshold and margin for better mobile triggering
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -96,7 +98,7 @@ export function ServicesShowcase() {
           observer.disconnect()
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.05, rootMargin: "50px" }
     )
 
     if (sectionRef.current) {
@@ -105,6 +107,16 @@ export function ServicesShowcase() {
 
     return () => observer.disconnect()
   }, [])
+
+  // Fallback timeout - if video doesn't load within 3 seconds, hide loading state anyway
+  useEffect(() => {
+    if (isSectionVisible && !isVideoLoaded) {
+      const timeout = setTimeout(() => {
+        setIsVideoLoaded(true)
+      }, 3000)
+      return () => clearTimeout(timeout)
+    }
+  }, [isSectionVisible, isVideoLoaded])
 
   const handleServiceChange = useCallback((index: number) => {
     if (index === activeIndex || isTransitioning) return
@@ -175,8 +187,16 @@ export function ServicesShowcase() {
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="auto"
               onLoadedData={handleVideoLoaded}
+              onCanPlay={handleVideoLoaded}
+              onError={() => {
+                setVideoError(true)
+                setIsVideoLoaded(true)
+              }}
+              // Additional mobile compatibility attributes
+              webkit-playsinline="true"
+              x5-playsinline="true"
             />
 
             <video
@@ -188,7 +208,9 @@ export function ServicesShowcase() {
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="auto"
+              webkit-playsinline="true"
+              x5-playsinline="true"
             />
           </>
         )}

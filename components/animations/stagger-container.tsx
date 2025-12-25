@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useInView, useReducedMotion } from "framer-motion"
-import { useRef } from "react"
+import { useRef, useEffect, useState } from "react"
 
 interface StaggerContainerProps {
   children: React.ReactNode
@@ -17,20 +17,35 @@ export function StaggerContainer({
   initialDelay = 0,
 }: StaggerContainerProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  // Use smaller negative margin for better mobile triggering
+  // -100px was preventing animations on smaller viewports
+  const isInView = useInView(ref, { once: true, margin: "-20px" })
   const shouldReduceMotion = useReducedMotion()
+  const [forceVisible, setForceVisible] = useState(false)
+
+  // Fallback: force visibility after 2 seconds if animations haven't triggered
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!isInView) {
+        setForceVisible(true)
+      }
+    }, 2000)
+    return () => clearTimeout(timeout)
+  }, [isInView])
+
+  const shouldShow = isInView || forceVisible
 
   return (
     <motion.div
       ref={ref}
       initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
+      animate={shouldShow ? "visible" : "hidden"}
       variants={{
         hidden: {},
         visible: {
           transition: {
-            staggerChildren: shouldReduceMotion ? 0 : staggerDelay,
-            delayChildren: shouldReduceMotion ? 0 : initialDelay,
+            staggerChildren: shouldReduceMotion || forceVisible ? 0 : staggerDelay,
+            delayChildren: shouldReduceMotion || forceVisible ? 0 : initialDelay,
           },
         },
       }}
