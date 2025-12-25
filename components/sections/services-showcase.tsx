@@ -169,11 +169,19 @@ export function ServicesShowcase() {
     <section ref={sectionRef} id="services" className="relative min-h-[85vh] w-full overflow-hidden">
       {/* Full-Screen Video Background */}
       <div className="absolute inset-0">
-        {!isVideoLoaded && (
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 animate-pulse" />
+        {/* Static image fallback - always present as base layer */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/excavator-site.jpg')" }}
+        />
+
+        {/* Loading state overlay - only shows briefly before video/image loads */}
+        {!isVideoLoaded && !videoError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 to-slate-800/80 animate-pulse" />
         )}
 
-        {isSectionVisible && (
+        {/* Video layer - on top of static image, hidden on error */}
+        {isSectionVisible && !videoError && (
           <>
             <video
               ref={currentVideoRef}

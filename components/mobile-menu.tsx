@@ -42,7 +42,8 @@ export const MobileMenu = ({ className, isLight = false }: MobileMenuProps) => {
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <div data-overlay="true" className="fixed z-30 inset-0 backdrop-blur-sm bg-black/50" />
+        {/* Solid black overlay - no blur to prevent showing content behind */}
+        <div data-overlay="true" className="fixed z-30 inset-0 bg-black/95" />
 
         <Dialog.Content
           onInteractOutside={(e) => {
