@@ -280,40 +280,42 @@ export function ServicesShowcase() {
                 {/* Top inner glow */}
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
-                {/* Tab Bar - Contained */}
-                <div className="border-b border-white/10 px-2 py-2 flex items-center gap-1 overflow-x-auto scrollbar-hide bg-white/5">
-                  <StaggerContainer staggerDelay={0.05} initialDelay={0.2}>
-                    {services.map((service, index) => {
-                      const Icon = service.icon
-                      const isActive = index === activeIndex
+                {/* Tab Bar - Horizontal Layout for Mobile */}
+                <div className="border-b border-white/10 px-2 py-2 bg-white/5">
+                  <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+                    <StaggerContainer staggerDelay={0.05} initialDelay={0.2} className="flex items-center gap-1 flex-shrink-0">
+                      {services.map((service, index) => {
+                        const Icon = service.icon
+                        const isActive = index === activeIndex
 
-                      return (
-                        <StaggerItem key={service.id}>
-                          <motion.button
-                            onClick={() => handleServiceChange(index)}
-                            className={cn(
-                              "flex items-center gap-2 px-4 py-3 md:py-2.5 rounded-xl font-mono text-xs md:text-sm whitespace-nowrap transition-all duration-300 relative min-h-[44px]",
-                              isActive
-                                ? "bg-white/20 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]"
-                                : "text-white/50 hover:text-white hover:bg-white/10"
-                            )}
-                            whileHover={{ scale: 1.02, y: -1 }}
-                            whileTap={{ scale: 0.98 }}
-                            aria-label={service.title}
-                          >
-                            <Icon className="size-4" />
-                            <span className="hidden sm:inline relative">{service.shortTitle}</span>
-                          </motion.button>
-                        </StaggerItem>
-                      )
-                    })}
-                  </StaggerContainer>
+                        return (
+                          <StaggerItem key={service.id}>
+                            <motion.button
+                              onClick={() => handleServiceChange(index)}
+                              className={cn(
+                                "flex items-center justify-center gap-2 px-3 py-2.5 md:px-4 md:py-2.5 rounded-xl font-mono text-xs md:text-sm whitespace-nowrap transition-all duration-300 relative min-h-[44px] min-w-[44px] flex-shrink-0",
+                                isActive
+                                  ? "bg-white/20 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]"
+                                  : "text-white/50 hover:text-white hover:bg-white/10"
+                              )}
+                              whileHover={{ scale: 1.02, y: -1 }}
+                              whileTap={{ scale: 0.98 }}
+                              aria-label={service.title}
+                            >
+                              <Icon className="size-4 flex-shrink-0" />
+                              <span className="hidden sm:inline relative">{service.shortTitle}</span>
+                            </motion.button>
+                          </StaggerItem>
+                        )
+                      })}
+                    </StaggerContainer>
 
-                  {/* Counter - Integrated */}
-                  <div className="ml-auto pl-4 pr-2 flex items-center gap-2">
-                    <span className="font-mono text-xs text-white/40">
-                      {String(activeIndex + 1).padStart(2, '0')}/{String(services.length).padStart(2, '0')}
-                    </span>
+                    {/* Counter - Integrated */}
+                    <div className="ml-auto pl-4 pr-2 flex items-center gap-2 flex-shrink-0">
+                      <span className="font-mono text-xs text-white/40">
+                        {String(activeIndex + 1).padStart(2, '0')}/{String(services.length).padStart(2, '0')}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
